@@ -8,7 +8,7 @@
         <!--Stato-->
         <scene sceneID="q2H-g1-Rl9">
             <objects>
-                <tableViewController id="6Wh-qp-Y0j" customClass="ToDoItemTableViewController" sceneMemberID="viewController">
+                <tableViewController id="6Wh-qp-Y0j" customClass="HomeViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="lJJ-4j-RW8">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

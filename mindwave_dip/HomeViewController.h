@@ -9,7 +9,7 @@
 #import "VideoTCP.h"
 #import <UIKit/UIKit.h>
 
-@interface ToDoItemTableViewController : UITableViewController <VideoTCPDelegate>
+@interface HomeViewController : UITableViewController <VideoTCPDelegate>
 @property (retain) MindwaveTCP *mindwaveTCP;
 @property (retain) VideoTCP *videoTCP;
 

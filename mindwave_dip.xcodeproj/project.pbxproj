@@ -28,7 +28,7 @@
 		14632A731B9EF29D004215D2 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 14632A721B9EF29D004215D2 /* Reachability.m */; };
 		1471F8A31B9EF4DC00261A21 /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1471F8A21B9EF4DC00261A21 /* AsyncSocket.m */; };
 		14B66A6D1B0A2CAF0029AAA1 /* VideoTCP.m in Sources */ = {isa = PBXBuildFile; fileRef = 14B66A6C1B0A2CAF0029AAA1 /* VideoTCP.m */; };
-		14DA91011ACDAD7E00C04838 /* ToDoItemTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14DA91001ACDAD7E00C04838 /* ToDoItemTableViewController.m */; };
+		14DA91011ACDAD7E00C04838 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14DA91001ACDAD7E00C04838 /* HomeViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -72,8 +72,8 @@
 		1471F8A21B9EF4DC00261A21 /* AsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AsyncSocket.m; path = mindwave_dip/AsyncSocket.m; sourceTree = "<group>"; };
 		14B66A6B1B0A2CAF0029AAA1 /* VideoTCP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoTCP.h; sourceTree = "<group>"; };
 		14B66A6C1B0A2CAF0029AAA1 /* VideoTCP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoTCP.m; sourceTree = "<group>"; };
-		14DA90FF1ACDAD7E00C04838 /* ToDoItemTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToDoItemTableViewController.h; sourceTree = "<group>"; };
-		14DA91001ACDAD7E00C04838 /* ToDoItemTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToDoItemTableViewController.m; sourceTree = "<group>"; };
+		14DA90FF1ACDAD7E00C04838 /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
+		14DA91001ACDAD7E00C04838 /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,8 +117,8 @@
 				1423F53C1ACE9E64001F2018 /* VideoPlayerViewController.h */,
 				1423F53D1ACE9E64001F2018 /* VideoPlayerViewController.m */,
 				140DA4191ACD9D7200256F5C /* Main.storyboard */,
-				14DA90FF1ACDAD7E00C04838 /* ToDoItemTableViewController.h */,
-				14DA91001ACDAD7E00C04838 /* ToDoItemTableViewController.m */,
+				14DA90FF1ACDAD7E00C04838 /* HomeViewController.h */,
+				14DA91001ACDAD7E00C04838 /* HomeViewController.m */,
 				140DA41C1ACD9D7200256F5C /* Images.xcassets */,
 				140DA40F1ACD9D7200256F5C /* Supporting Files */,
 				14B66A6B1B0A2CAF0029AAA1 /* VideoTCP.h */,
@@ -262,7 +262,7 @@
 				1444943B1B9EFAC2002C9AE1 /* RTSPClientConnection.mm in Sources */,
 				140DA4181ACD9D7200256F5C /* ViewController.m in Sources */,
 				1444943C1B9EFAC2002C9AE1 /* RTSPMessage.m in Sources */,
-				14DA91011ACDAD7E00C04838 /* ToDoItemTableViewController.m in Sources */,
+				14DA91011ACDAD7E00C04838 /* HomeViewController.m in Sources */,
 				14B66A6D1B0A2CAF0029AAA1 /* VideoTCP.m in Sources */,
 				14632A731B9EF29D004215D2 /* Reachability.m in Sources */,
 				1444943E1B9EFAC2002C9AE1 /* VideoEncoder.m in Sources */,

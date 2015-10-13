@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 X Y. All rights reserved.
 //
 
-#import "ToDoItemTableViewController.h"
+#import "HomeViewController.h"
 #import "VideoPlayerViewController.h"
 #import "Reachability.h"
 #import <CoreBluetooth/CoreBluetooth.h>
@@ -18,7 +18,7 @@
 #import "ifaddrs.h"
 #import "arpa/inet.h"
 
-@interface ToDoItemTableViewController ()
+@interface HomeViewController ()
 @property NSMutableArray *toDoItems;
 @property (nonatomic) Reachability *wifiReachability;
 @property (nonatomic) CBCentralManager *bluetoothManager;
@@ -30,7 +30,7 @@
 @end
 
 
-@implementation ToDoItemTableViewController
+@implementation HomeViewController
 
 
 
