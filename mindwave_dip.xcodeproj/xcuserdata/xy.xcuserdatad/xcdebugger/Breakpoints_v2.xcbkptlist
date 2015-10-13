@@ -154,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "mindwave_dip/HomeViewController.m"
-            timestampString = "458143498.527285"
+            timestampString = "466438438.730131"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "88"
-            endingLineNumber = "88"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
             landmarkName = "-updateInterfaceWithReachability:"
             landmarkType = "5">
          </BreakpointContent>

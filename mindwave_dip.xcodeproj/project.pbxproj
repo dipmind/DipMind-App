@@ -28,6 +28,7 @@
 		145143A11AEE75A600AAA42C /* MindwaveTCP.m in Sources */ = {isa = PBXBuildFile; fileRef = 145143A01AEE75A600AAA42C /* MindwaveTCP.m */; };
 		14632A731B9EF29D004215D2 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 14632A721B9EF29D004215D2 /* Reachability.m */; };
 		1471F8A31B9EF4DC00261A21 /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1471F8A21B9EF4DC00261A21 /* AsyncSocket.m */; };
+		14AB00991BCD522100E85BAE /* AsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 14AB00981BCD522100E85BAE /* AsyncUdpSocket.m */; settings = {ASSET_TAGS = (); }; };
 		14B66A6D1B0A2CAF0029AAA1 /* VideoTCP.m in Sources */ = {isa = PBXBuildFile; fileRef = 14B66A6C1B0A2CAF0029AAA1 /* VideoTCP.m */; };
 		14D0D6AC1B4EB44D00E9F43E /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14D0D6AB1B4EB44D00E9F43E /* HomeViewController.m */; };
 		14DA90FE1ACDAD0900C04838 /* AddItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14DA90FD1ACDAD0900C04838 /* AddItemViewController.m */; };
@@ -75,6 +76,8 @@
 		14632A721B9EF29D004215D2 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = mindwave_dip/Reachability.m; sourceTree = "<group>"; };
 		1471F8A11B9EF4DC00261A21 /* AsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncSocket.h; path = mindwave_dip/AsyncSocket.h; sourceTree = "<group>"; };
 		1471F8A21B9EF4DC00261A21 /* AsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AsyncSocket.m; path = mindwave_dip/AsyncSocket.m; sourceTree = "<group>"; };
+		14AB00971BCD522100E85BAE /* AsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncUdpSocket.h; path = mindwave_dip/AsyncUdpSocket.h; sourceTree = "<group>"; };
+		14AB00981BCD522100E85BAE /* AsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AsyncUdpSocket.m; path = mindwave_dip/AsyncUdpSocket.m; sourceTree = "<group>"; };
 		14B66A6B1B0A2CAF0029AAA1 /* VideoTCP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoTCP.h; sourceTree = "<group>"; };
 		14B66A6C1B0A2CAF0029AAA1 /* VideoTCP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoTCP.m; sourceTree = "<group>"; };
 		14D0D6AA1B4EB44D00E9F43E /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
@@ -101,6 +104,7 @@
 		140DA4031ACD9D7200256F5C = {
 			isa = PBXGroup;
 			children = (
+				148ED2201BCD444A00CE4321 /* AsyncSocket */,
 				1444943F1B9EFAD8002C9AE1 /* Accelerate.framework */,
 				144494261B9EFAC2002C9AE1 /* RTSPCameraServer */,
 				14632A761B9EF41E004215D2 /* Reachability */,
@@ -193,12 +197,21 @@
 		14632A761B9EF41E004215D2 /* Reachability */ = {
 			isa = PBXGroup;
 			children = (
-				1471F8A11B9EF4DC00261A21 /* AsyncSocket.h */,
-				1471F8A21B9EF4DC00261A21 /* AsyncSocket.m */,
 				14632A711B9EF29D004215D2 /* Reachability.h */,
 				14632A721B9EF29D004215D2 /* Reachability.m */,
 			);
 			name = Reachability;
+			sourceTree = "<group>";
+		};
+		148ED2201BCD444A00CE4321 /* AsyncSocket */ = {
+			isa = PBXGroup;
+			children = (
+				14AB00971BCD522100E85BAE /* AsyncUdpSocket.h */,
+				14AB00981BCD522100E85BAE /* AsyncUdpSocket.m */,
+				1471F8A11B9EF4DC00261A21 /* AsyncSocket.h */,
+				1471F8A21B9EF4DC00261A21 /* AsyncSocket.m */,
+			);
+			name = AsyncSocket;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -278,6 +291,7 @@
 				140DA4181ACD9D7200256F5C /* ViewController.m in Sources */,
 				1444943C1B9EFAC2002C9AE1 /* RTSPMessage.m in Sources */,
 				14DA91011ACDAD7E00C04838 /* ToDoItemTableViewController.m in Sources */,
+				14AB00991BCD522100E85BAE /* AsyncUdpSocket.m in Sources */,
 				14B66A6D1B0A2CAF0029AAA1 /* VideoTCP.m in Sources */,
 				14632A731B9EF29D004215D2 /* Reachability.m in Sources */,
 				1444943E1B9EFAC2002C9AE1 /* VideoEncoder.m in Sources */,
@@ -401,6 +415,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/mindwave_dip/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -419,6 +434,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/mindwave_dip/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
