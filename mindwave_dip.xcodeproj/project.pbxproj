@@ -13,7 +13,6 @@
 		140DA41B1ACD9D7200256F5C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 140DA4191ACD9D7200256F5C /* Main.storyboard */; };
 		140DA41D1ACD9D7200256F5C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 140DA41C1ACD9D7200256F5C /* Images.xcassets */; };
 		140DA4201ACD9D7200256F5C /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 140DA41E1ACD9D7200256F5C /* LaunchScreen.xib */; };
-		1423F53B1ACE8C14001F2018 /* ToDoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 1423F53A1ACE8C14001F2018 /* ToDoItem.m */; };
 		1423F53E1ACE9E64001F2018 /* VideoPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1423F53D1ACE9E64001F2018 /* VideoPlayerViewController.m */; };
 		143A31541B9EF7FA0079993D /* libTGAccessory.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146238CA1B15F81A0090AE19 /* libTGAccessory.a */; };
 		144494371B9EFAC2002C9AE1 /* AVEncoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 144494281B9EFAC2002C9AE1 /* AVEncoder.mm */; };
@@ -29,8 +28,6 @@
 		14632A731B9EF29D004215D2 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 14632A721B9EF29D004215D2 /* Reachability.m */; };
 		1471F8A31B9EF4DC00261A21 /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1471F8A21B9EF4DC00261A21 /* AsyncSocket.m */; };
 		14B66A6D1B0A2CAF0029AAA1 /* VideoTCP.m in Sources */ = {isa = PBXBuildFile; fileRef = 14B66A6C1B0A2CAF0029AAA1 /* VideoTCP.m */; };
-		14D0D6AC1B4EB44D00E9F43E /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14D0D6AB1B4EB44D00E9F43E /* HomeViewController.m */; };
-		14DA90FE1ACDAD0900C04838 /* AddItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14DA90FD1ACDAD0900C04838 /* AddItemViewController.m */; };
 		14DA91011ACDAD7E00C04838 /* ToDoItemTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14DA91001ACDAD7E00C04838 /* ToDoItemTableViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -45,8 +42,6 @@
 		140DA41A1ACD9D7200256F5C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		140DA41C1ACD9D7200256F5C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		140DA41F1ACD9D7200256F5C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		1423F5391ACE8C14001F2018 /* ToDoItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToDoItem.h; sourceTree = "<group>"; };
-		1423F53A1ACE8C14001F2018 /* ToDoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToDoItem.m; sourceTree = "<group>"; };
 		1423F53C1ACE9E64001F2018 /* VideoPlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPlayerViewController.h; sourceTree = "<group>"; };
 		1423F53D1ACE9E64001F2018 /* VideoPlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoPlayerViewController.m; sourceTree = "<group>"; };
 		144494271B9EFAC2002C9AE1 /* AVEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVEncoder.h; sourceTree = "<group>"; };
@@ -77,10 +72,6 @@
 		1471F8A21B9EF4DC00261A21 /* AsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AsyncSocket.m; path = mindwave_dip/AsyncSocket.m; sourceTree = "<group>"; };
 		14B66A6B1B0A2CAF0029AAA1 /* VideoTCP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoTCP.h; sourceTree = "<group>"; };
 		14B66A6C1B0A2CAF0029AAA1 /* VideoTCP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoTCP.m; sourceTree = "<group>"; };
-		14D0D6AA1B4EB44D00E9F43E /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
-		14D0D6AB1B4EB44D00E9F43E /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
-		14DA90FC1ACDAD0900C04838 /* AddItemViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddItemViewController.h; sourceTree = "<group>"; };
-		14DA90FD1ACDAD0900C04838 /* AddItemViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddItemViewController.m; sourceTree = "<group>"; };
 		14DA90FF1ACDAD7E00C04838 /* ToDoItemTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToDoItemTableViewController.h; sourceTree = "<group>"; };
 		14DA91001ACDAD7E00C04838 /* ToDoItemTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToDoItemTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -126,14 +117,8 @@
 				1423F53C1ACE9E64001F2018 /* VideoPlayerViewController.h */,
 				1423F53D1ACE9E64001F2018 /* VideoPlayerViewController.m */,
 				140DA4191ACD9D7200256F5C /* Main.storyboard */,
-				14D0D6AA1B4EB44D00E9F43E /* HomeViewController.h */,
-				14D0D6AB1B4EB44D00E9F43E /* HomeViewController.m */,
-				1423F5391ACE8C14001F2018 /* ToDoItem.h */,
-				1423F53A1ACE8C14001F2018 /* ToDoItem.m */,
 				14DA90FF1ACDAD7E00C04838 /* ToDoItemTableViewController.h */,
 				14DA91001ACDAD7E00C04838 /* ToDoItemTableViewController.m */,
-				14DA90FC1ACDAD0900C04838 /* AddItemViewController.h */,
-				14DA90FD1ACDAD0900C04838 /* AddItemViewController.m */,
 				140DA41C1ACD9D7200256F5C /* Images.xcassets */,
 				140DA40F1ACD9D7200256F5C /* Supporting Files */,
 				14B66A6B1B0A2CAF0029AAA1 /* VideoTCP.h */,
@@ -282,14 +267,11 @@
 				14632A731B9EF29D004215D2 /* Reachability.m in Sources */,
 				1444943E1B9EFAC2002C9AE1 /* VideoEncoder.m in Sources */,
 				1444943D1B9EFAC2002C9AE1 /* RTSPServer.m in Sources */,
-				14DA90FE1ACDAD0900C04838 /* AddItemViewController.m in Sources */,
 				1444943A1B9EFAC2002C9AE1 /* NALUnit.cpp in Sources */,
 				144494391B9EFAC2002C9AE1 /* MP4Atom.m in Sources */,
 				1471F8A31B9EF4DC00261A21 /* AsyncSocket.m in Sources */,
 				145143A11AEE75A600AAA42C /* MindwaveTCP.m in Sources */,
 				140DA4151ACD9D7200256F5C /* AppDelegate.m in Sources */,
-				1423F53B1ACE8C14001F2018 /* ToDoItem.m in Sources */,
-				14D0D6AC1B4EB44D00E9F43E /* HomeViewController.m in Sources */,
 				144494371B9EFAC2002C9AE1 /* AVEncoder.mm in Sources */,
 				140DA4121ACD9D7200256F5C /* main.m in Sources */,
 			);
@@ -401,6 +383,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/mindwave_dip/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -419,6 +402,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/mindwave_dip/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
