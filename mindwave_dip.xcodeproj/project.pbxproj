@@ -30,7 +30,6 @@
 		1471F8A31B9EF4DC00261A21 /* AsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1471F8A21B9EF4DC00261A21 /* AsyncSocket.m */; };
 		14AB00991BCD522100E85BAE /* AsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 14AB00981BCD522100E85BAE /* AsyncUdpSocket.m */; settings = {ASSET_TAGS = (); }; };
 		14B66A6D1B0A2CAF0029AAA1 /* VideoTCP.m in Sources */ = {isa = PBXBuildFile; fileRef = 14B66A6C1B0A2CAF0029AAA1 /* VideoTCP.m */; };
-		14D0D6AC1B4EB44D00E9F43E /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14D0D6AB1B4EB44D00E9F43E /* HomeViewController.m */; };
 		14DA90FE1ACDAD0900C04838 /* AddItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14DA90FD1ACDAD0900C04838 /* AddItemViewController.m */; };
 		14DA91011ACDAD7E00C04838 /* ToDoItemTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14DA91001ACDAD7E00C04838 /* ToDoItemTableViewController.m */; };
 /* End PBXBuildFile section */
@@ -80,8 +79,6 @@
 		14AB00981BCD522100E85BAE /* AsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AsyncUdpSocket.m; path = mindwave_dip/AsyncUdpSocket.m; sourceTree = "<group>"; };
 		14B66A6B1B0A2CAF0029AAA1 /* VideoTCP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoTCP.h; sourceTree = "<group>"; };
 		14B66A6C1B0A2CAF0029AAA1 /* VideoTCP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoTCP.m; sourceTree = "<group>"; };
-		14D0D6AA1B4EB44D00E9F43E /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
-		14D0D6AB1B4EB44D00E9F43E /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
 		14DA90FC1ACDAD0900C04838 /* AddItemViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddItemViewController.h; sourceTree = "<group>"; };
 		14DA90FD1ACDAD0900C04838 /* AddItemViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddItemViewController.m; sourceTree = "<group>"; };
 		14DA90FF1ACDAD7E00C04838 /* ToDoItemTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToDoItemTableViewController.h; sourceTree = "<group>"; };
@@ -130,8 +127,6 @@
 				1423F53C1ACE9E64001F2018 /* VideoPlayerViewController.h */,
 				1423F53D1ACE9E64001F2018 /* VideoPlayerViewController.m */,
 				140DA4191ACD9D7200256F5C /* Main.storyboard */,
-				14D0D6AA1B4EB44D00E9F43E /* HomeViewController.h */,
-				14D0D6AB1B4EB44D00E9F43E /* HomeViewController.m */,
 				1423F5391ACE8C14001F2018 /* ToDoItem.h */,
 				1423F53A1ACE8C14001F2018 /* ToDoItem.m */,
 				14DA90FF1ACDAD7E00C04838 /* ToDoItemTableViewController.h */,
@@ -303,7 +298,6 @@
 				145143A11AEE75A600AAA42C /* MindwaveTCP.m in Sources */,
 				140DA4151ACD9D7200256F5C /* AppDelegate.m in Sources */,
 				1423F53B1ACE8C14001F2018 /* ToDoItem.m in Sources */,
-				14D0D6AC1B4EB44D00E9F43E /* HomeViewController.m in Sources */,
 				144494371B9EFAC2002C9AE1 /* AVEncoder.mm in Sources */,
 				140DA4121ACD9D7200256F5C /* main.m in Sources */,
 			);

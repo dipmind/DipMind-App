@@ -19,6 +19,7 @@
 #import "AsyncSocket.h"
 #import "ifaddrs.h"
 #import "arpa/inet.h"
+#import "AsyncUdpSocket.h"
 
 @interface ToDoItemTableViewController ()
 @property NSMutableArray *toDoItems;
@@ -29,6 +30,7 @@
 @property (nonatomic) NSMutableArray *connectedSockets;
 @property bool isRunning;
 @property (nonatomic) NSString *serverIP;
+@property (nonatomic) AsyncUdpSocket *ssdpSock;
 @end
 
 
@@ -90,6 +92,35 @@
     //AVVIO SOCKET
     [self startStop:self];
     NSLog(@"********Fine viewDIDLOAD");
+    
+    [NSTimer scheduledTimerWithTimeInterval: 10 target: self
+                                   selector:@selector(discoverDevices) userInfo: self repeats: YES];
+}
+
+-(void)discoverDevices {
+    self.ssdpSock = [[AsyncUdpSocket alloc] initWithDelegate:self];
+    [self.ssdpSock enableBroadcast:TRUE error:nil];
+    NSString *str = @"M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\nMan: \"ssdp:discover\"\r\nST: mydev\r\n\r\n";
+    [self.ssdpSock bindToPort:0 error:nil];
+    [self.ssdpSock joinMulticastGroup:@"239.255.255.250" error:nil];
+    [self.ssdpSock sendData:[str dataUsingEncoding:NSUTF8StringEncoding]
+                     toHost: @"239.255.255.250" port: 1900 withTimeout:-1 tag:1];
+    [self.ssdpSock receiveWithTimeout: -1 tag:1];
+    [NSTimer scheduledTimerWithTimeInterval: 5 target: self
+                                   selector:@selector(completeSearch:) userInfo: self repeats: NO]; }
+
+
+-(void) completeSearch: (NSTimer *)t {
+    NSLog(@"%s",__FUNCTION__);
+    [self.ssdpSock close];
+    self.ssdpSock = nil;}
+
+- (BOOL)onUdpSocket:(AsyncUdpSocket *)sock didReceiveData:(NSData *)data withTag:(long)tag fromHost:(NSString *)host port:(UInt16)port
+{
+    NSLog(@"%s %ld %@ %d", __FUNCTION__ ,tag,host,port);
+    NSString *aStr = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+    NSLog(@"%@",aStr);
+    return YES;
     
 }
 
