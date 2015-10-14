@@ -12,13 +12,12 @@
 
 @synthesize delegate;
 
-- (id)init {
+- (id)initWithServerIP:(NSString*) address {
     self = [super init];
     
     if (self) {
         self.SERVER_PORT = 3005;
-        self.SERVER_ADDR = CFSTR("10.20.10.69");
-        //self.SERVER_ADDR = CFSTR("10.20.189.47");
+        self.SERVER_ADDR = address;
         
         self.tcp_connected = false;
     }
@@ -41,7 +40,7 @@
         //CFWriteStreamRef writeStream;
         CFReadStreamRef readStream;
         
-        CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)self.SERVER_ADDR, self.SERVER_PORT, &readStream, NULL);
+        CFStreamCreatePairWithSocketToHost(NULL, (__bridge CFStringRef)self.SERVER_ADDR, self.SERVER_PORT, &readStream, NULL);
         self.inputStream = (__bridge NSInputStream *)(readStream);
         //self.outputStream = (__bridge NSOutputStream *)(writeStream);
     

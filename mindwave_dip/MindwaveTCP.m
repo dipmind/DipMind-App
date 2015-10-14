@@ -12,12 +12,12 @@
 
 @implementation MindwaveTCP
 
-- (id)init {
+- (id)initWithServerIP:(NSString*) address {
     self = [super init];
     
     if (self) {
         self.SERVER_PORT = 3003;
-        self.SERVER_ADDR = CFSTR("10.20.10.69");
+        self.SERVER_ADDR = address;
         
         self.mindwave_connected = false;
         self.tcp_connected = false;
@@ -38,7 +38,7 @@
         
     
         CFWriteStreamRef writeStream;
-        CFStreamCreatePairWithSocketToHost(NULL, (CFStringRef)self.SERVER_ADDR, self.SERVER_PORT, NULL, &writeStream);
+        CFStreamCreatePairWithSocketToHost(NULL, (__bridge CFStringRef) self.SERVER_ADDR, self.SERVER_PORT, NULL, &writeStream);
         self.outputStream = (__bridge NSOutputStream *)(writeStream);
     
         [self.outputStream setDelegate:self];

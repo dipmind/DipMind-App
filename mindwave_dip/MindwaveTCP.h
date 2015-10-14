@@ -11,7 +11,7 @@
 
 @interface MindwaveTCP : NSObject <NSStreamDelegate, TGAccessoryDelegate>
 
-@property CFStringRef SERVER_ADDR;
+@property (retain) NSString* SERVER_ADDR;
 @property int SERVER_PORT;
 
 @property bool mindwave_connected;// = false
@@ -24,7 +24,7 @@ extern NSString *kReachabilityChangedNotification;
 @property (retain) NSOutputStream *outputStream;
 @property (retain) NSTimer *tcpConnectionTimer;
 
--(id)init;
+-(id)initWithServerIP:(NSString*) address;
 
 -(void)initNetworkCommunication;
 -(void)stopTcpConn;
