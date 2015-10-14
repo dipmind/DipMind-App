@@ -78,18 +78,18 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell userInteractionEnabled="NO" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Server" textLabel="hPd-bQ-iYB" style="IBUITableViewCellStyleDefault" id="87C-Ff-mhO">
+                                    <tableViewCell userInteractionEnabled="NO" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Server" textLabel="hPd-bQ-iYB" style="IBUITableViewCellStyleDefault" id="87C-Ff-mhO">
                                         <rect key="frame" x="0.0" y="289" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="87C-Ff-mhO" id="1a8-aK-fy8">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Server" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="hPd-bQ-iYB">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Server" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="hPd-bQ-iYB">
                                                     <rect key="frame" x="15" y="0.0" width="570" height="43"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
@@ -122,7 +122,7 @@
                 <avPlayerViewController showsPlaybackControls="NO" videoGravity="AVLayerVideoGravityResizeAspect" id="71X-SP-sXy" customClass="VideoPlayerViewController" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" title="Video" id="49R-OJ-ef1"/>
                     <connections>
-                        <segue destination="M8c-ET-gDn" kind="unwind" identifier="segueFromVideo" unwindAction="unwindToList:" id="gkS-Xd-OtM"/>
+                        <segue destination="M8c-ET-gDn" kind="unwind" identifier="segueFromVideo" unwindAction="unwindToHome:" id="gkS-Xd-OtM"/>
                     </connections>
                 </avPlayerViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="H7r-B1-Oj4" userLabel="First Responder" sceneMemberID="firstResponder"/>

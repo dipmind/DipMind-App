@@ -9,14 +9,15 @@
 #import "HomeViewController.h"
 #import "VideoPlayerViewController.h"
 #import "Reachability.h"
-#import <CoreBluetooth/CoreBluetooth.h>
 #import "CameraServer.h"
-/*#include <CoreFoundation/CoreFoundation.h>
-#include <sys/socket.h>
-#include <netinet/in.h>*/
 #import "AsyncSocket.h"
+
+// usati per ottenere l'ip
 #import "ifaddrs.h"
 #import "arpa/inet.h"
+
+#import <CoreBluetooth/CoreBluetooth.h>
+
 
 @interface HomeViewController ()
 @property (nonatomic, retain) MindwaveTCP *mindwaveTCP;
@@ -28,7 +29,7 @@
 @property (nonatomic, retain) CameraServer *rtspServer;
 @property (nonatomic, retain) AsyncSocket *listenSocket;
 @property (nonatomic, retain) NSMutableArray *connectedSockets;
-@property bool isRunning;
+@property bool isWaitingConnection;
 @property (nonatomic, retain) NSString *serverIP;
 @end
 
@@ -40,82 +41,62 @@
     
     self.serverIP = nil;
     
-    //Creo un oggetto reachability che permette di vedere se c'e' connesione wifi o meno la notification permette di vedere cambiamenti di stato e quindi di instanziare i vari oggetti o meno
-    //AVVIO VERIFICA SOLO SU WIFI PER RENDERE VISIBILE MIO IP
+    // Crea un oggetto Reachability che permette di controllare se e' presente una connessione wifi,
+    // e la notification indica quando c'e' stato un cambiamento di stato della reachability.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
-    
     self.wifiReachability = [Reachability reachabilityForLocalWiFi];
     [self.wifiReachability startNotifier];
     [self updateInterfaceWithReachability:self.wifiReachability];
     
+    [self detectBluetooth];
     
-    //INIZIALIZZO SOCKET ASCOLTO
+    // Inizializza il socket in ascolto
     self.listenSocket = [[AsyncSocket alloc] initWithDelegate:self];
     self.connectedSockets = [[NSMutableArray alloc] initWithCapacity:1];
     
-    self.isRunning = NO;
-    //LO METTO SU RUNLOOP PER ASPETTARE UNA CONNESSIONE
-    [self.listenSocket setRunLoopModes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+    self.isWaitingConnection = NO;
     
-    //AVVIO SOCKET
+    
+    //LO METTO SU RUNLOOP PER ASPETTARE UNA CONNESSIONE
+    //[self.listenSocket setRunLoopModes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+    
+    // Apre socket
     [self startStop:self];
-    NSLog(@"* Home view loaded.");
+    NSLog(@"** Home view loaded.");
     
 }
 
-/*static void handleConnect ( CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address, const void *data, void *info ){
-    NSLog(@"***************Socket Callback");
-};*/
-
-- (IBAction)startStop:(id)sender
+- (void)startStop:(id)sender
 {
-    if(!self.isRunning)
-    {
-        //SE LO DEVO AVVIARE LO METTO SU PORTA 6969
-        int port = 6969;//[portField intValue];
-        
-        if(port < 0 || port > 65535)
-        {
-            port = 0;
-        }
+    int port = FIRSTCONNECTION_PORT;
+    
+    if(!self.isWaitingConnection) {
+        // Comincia ad aspettare una connessione
         
         NSError *error = nil;
-        if(![self.listenSocket acceptOnPort:port error:&error])
-        {
-            NSLog(@"Error starting server: %@", error);
+        if(![self.listenSocket acceptOnPort:port error:&error]) {
+            NSLog(@"** Error trying to listen on port %d for a connection: %@", port, error);
             return;
         }
         
-        //[self logInfo:FORMAT(@"Echo server started on port %hu", [self.listenSocket localPort])];
-        self.isRunning = YES;
-        
-        ///[portField setEnabled:NO];
-        //[startStopButton setTitle:@"Stop"];
-    }
-    else
-    {
-        //SE LO DEVO FERMARE DISCONNETTO SOCKET E SUOI HOST
-        // Stop accepting connections
+        self.isWaitingConnection = YES;
+    } else {
+        // Disconnette il socket e quindi smette di aspettare una connessione
         [self.listenSocket disconnect];
         
         // Stop any client connections
-        NSUInteger i;
-        for(i = 0; i < [self.connectedSockets count]; i++)
-        {
+        for(NSUInteger i = 0; i < [self.connectedSockets count]; i++) {
             // Call disconnect on the socket,
             // which will invoke the onSocketDidDisconnect: method,
             // which will remove the socket from the list.
             [[self.connectedSockets objectAtIndex:i] disconnect];
         }
         
-        NSLog(@"Stopped Echo server");
-        self.isRunning = false;
+        NSLog(@"** Stop listening on port %d for connections", port);
+        self.isWaitingConnection = NO;
         
-        //AVVIO METODO PER INIZIALIZZARE TUTTO IL RESTO (mindwaveTCP, videoTCP, rtspServer)
+        // Avvia tutto il resto (mindwaveTCP, videoTCP, rtspServer)
         [self startUpAll];
-        
-        //[portField setEnabled:YES];
-        //[startStopButton setTitle:@"Start"];
     }
 }
 
@@ -126,26 +107,20 @@
 
 - (void)onSocket:(AsyncSocket *)sock didConnectToHost:(NSString *)host port:(UInt16)port
 {
-    NSLog(@"Accepted client %@:%hu", host, port);
+    NSLog(@"** Accepted client %@:%hu", host, port);
     
-    //QUANDO ACCETTO SOCKET SU PORTA NE MEMORIZZO L'INDIRIZZO
+    // Memorizza l'indirizzo del server
     self.serverIP = host;
-    //RIFACCIO METODO STARTSTOP PER STOPPARE TUTTO (ORAMI HO L'IP DI SERVER)
+    // Chiude il socket in ascolto, non e' piu' necessario
     [self startStop:self];
-    
-    //[sock writeData:welcomeData withTimeout:-1 tag:WELCOME_MSG];
-    
-    //[sock readDataToData:[AsyncSocket CRLFData] withTimeout:READ_TIMEOUT tag:0];
 }
 
-
-- (void) startUpAll {
-    
-    
+- (void) startUpAll
+{
     self.rtspServer = [CameraServer server];
-    self.mindwaveTCP = [[MindwaveTCP alloc] init];
+    self.mindwaveTCP = [[MindwaveTCP alloc] initWithServerIP:self.serverIP];
     
-    //INDICO CALLBACK PER NOTIFICHE SU CONNESSIONI/DISCONNESSIONI VARI OGGETTI
+    // Indica callback per connessioni/disconnessioni
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videotcp_connection_changed:) name:@"VideoTcp_false" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videotcp_connection_changed:) name:@"VideoTcp_true" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavetcp_connection_changed:) name:@"mindwaveTcp_false" object:nil];
@@ -153,16 +128,10 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavebluetooth_connection_changed:) name:@"mindwaveBluetooth_false" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavebluetooth_connection_changed:) name:@"mindwaveBluetooth_true" object:nil];
     
-    /*[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
-    
-    self.wifiReachability = [Reachability reachabilityForLocalWiFi];
-    [self.wifiReachability startNotifier];*/
-    
-    //FACCIO UPDATE PER WIFI PER AVVIARE videoTCP
+    // L'update della reachability wifi fa partire
     [self updateInterfaceWithReachability:self.wifiReachability];
     
-    [self detectBluetooth];
-
+   
 }
 
 - (void) videotcp_connection_changed: (NSNotification *) note {
@@ -183,78 +152,53 @@
 
 - (void) mindwavebluetooth_connection_changed: (NSNotification *) note {
     if ([[note name] isEqualToString:@"mindwaveBluetooth_false"]) {
-        self.mindwaveCell.accessoryType = UITableViewCellAccessoryNone;} else if ([[note name] isEqualToString:@"mindwaveBluetooth_true"] && self.mindwaveTCP.tcp_connected) {
+        self.mindwaveCell.accessoryType = UITableViewCellAccessoryNone;
+    } else if ([[note name] isEqualToString:@"mindwaveBluetooth_true"] && self.mindwaveTCP.tcp_connected) {
         self.mindwaveCell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
 }
 
-
-- (void)updateInterfaceWithReachability:(Reachability *)reachability
-{
-    int status = [reachability currentReachabilityStatus];
+- (void)updateInterfaceWithReachability:(Reachability *)reachability {
+    NetworkStatus status = [reachability currentReachabilityStatus];
         
     if (status == NotReachable) {
-        NSLog(@"** WIfi not Reachable");
+        NSLog(@"** Wifi not reachable");
         if (self.videoTCP != nil) {
             [self.videoTCP stopTcpConn];
             self.videoTCP = nil;
         }
         
-        if (self.rtspServer != nil) {
+        if (self.rtspServer != nil)
             [self.rtspServer shutdown];
-        }
         
-        /*if (self.mindwaveTCP != nil) {
-            [self.mindwaveTCP stopTcpConn];
-            self.mindwaveTCP = nil;
-        }*/
         self.mindwaveTCP.wifiActive = false;
-        if (self.mindwaveTCP.mindwave_connected == true) {
+        if (self.mindwaveTCP.mindwave_connected)
             [self.mindwaveTCP stopTcpConn];
-        }
         
+        // Rimuove le spunte e l'ip dalle cells
         self.wifiCell.accessoryType = UITableViewCellAccessoryNone;
         self.serverCell.accessoryType = UITableViewCellAccessoryNone;
         self.wifiCell.detailTextLabel.text = @" ";
-
         
     } else if (status == ReachableViaWiFi) {
-        NSLog(@"** WIfi OK");
+        NSLog(@"** Wifi reachable");
+        
+        // Solo se ha ricevuto l'ip dal server
         if (self.videoTCP == nil && self.serverIP != nil) {
-            //LO FACCIO SOLO SE HO RICEVUTO IP DA SERVER
-            self.videoTCP = [[VideoTCP alloc] init];
-            [ self.videoTCP setDelegate:self];
+            self.videoTCP = [[VideoTCP alloc] initWithServerIP:self.serverIP];
+            [self.videoTCP setDelegate:self];
             [self.rtspServer startup];
             self.mindwaveTCP.wifiActive = true;
             [self.mindwaveTCP initNetworkCommunication];
         }
         
-        
-        
-        
-        //MA PERMETTO CHE SI VEDA IL MIO IP PER SCRIVERLO
-        /*UITableViewCell* new = [[UITableViewCell alloc] init];
-        
-        new.accessoryType = UITableViewCellAccessoryCheckmark;
-        new.detailTextLabel.text = [self getIPAddress];
-        
-        self.wifiCell = new;*/
-        
-        /*self.wifiCell.accessoryType = UITableViewCellAccessoryCheckmark;
-        NSString *a = [self getIPAddress];
-        NSLog(@"CIAO BEL %@", a);
-        self.wifiCell.detailTextLabel.text = @"ESISTE WIFI";*/
+        // Mostra l'ip come label di wifiCell
         self.wifiCell.detailTextLabel.text = [self getIPAddress];
         self.wifiCell.accessoryType = UITableViewCellAccessoryCheckmark;
-        //self.wifiCell.textLabel.text = @"COAIS";
-        
-
-
-        
     }
 }
 
-- (void) reachabilityChanged:(NSNotification *)note
+- (void)reachabilityChanged:(NSNotification *)note
 {
     Reachability* curReach = [note object];
     NSParameterAssert([curReach isKindOfClass:[Reachability class]]);
@@ -263,8 +207,7 @@
 
 - (void)detectBluetooth
 {
-    if(!self.bluetoothManager)
-    {
+    if(!self.bluetoothManager) {
         // Put on main queue so we can call UIAlertView from delegate callbacks.
         self.bluetoothManager = [[CBCentralManager alloc] initWithDelegate:self queue:dispatch_get_main_queue()];
     }
@@ -274,33 +217,31 @@
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central
 {
     NSString *stateString = nil;
-    switch(self.bluetoothManager.state)
-    {
-        case CBCentralManagerStateResetting: stateString = @"The connection with the system service was momentarily lost, update imminent."; break;
-        case CBCentralManagerStateUnsupported: stateString = @"The platform doesn't support Bluetooth Low Energy."; break;
-        case CBCentralManagerStateUnauthorized: stateString = @"The app is not authorized to use Bluetooth Low Energy."; break;
-        case CBCentralManagerStatePoweredOff: {
+    switch(self.bluetoothManager.state) {
+        case CBCentralManagerStateResetting:
+            stateString = @"The connection with the system service was momentarily lost, update imminent.";
+            break;
+        case CBCentralManagerStateUnsupported:
+            stateString = @"The platform doesn't support Bluetooth Low Energy.";
+            break;
+        case CBCentralManagerStateUnauthorized:
+            stateString = @"The app is not authorized to use Bluetooth Low Energy.";
+            break;
+        case CBCentralManagerStatePoweredOff:
             stateString = @"Bluetooth is currently powered off.";
-            //[self.mindwaveTCP offBluetoothConn];
             self.bluetoothCell.accessoryType = UITableViewCellAccessoryNone;
             break;
-        }
-        case CBCentralManagerStatePoweredOn: {
+        case CBCentralManagerStatePoweredOn:
             stateString = @"Bluetooth is currently powered on and available to use.";
-            //[self.mindwaveTCP onBluetoothConn];
             self.bluetoothCell.accessoryType = UITableViewCellAccessoryCheckmark;
             break;
-        }
-        default: stateString = @"State unknown, update imminent."; break;
+        default:
+            stateString = @"State unknown, update imminent.";
+            break;
     }
-    /*UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Bluetooth state"
-                                                     message:stateString
-                                                    delegate:nil
-                                           cancelButtonTitle:@"Okay" otherButtonTitleArray:nil] autorelease];
-    [alert show];*/
-    NSLog(@"%@", stateString);
+    
+    NSLog(@"** Bluetooth status: %@", stateString);
 }
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -312,88 +253,11 @@
     [self performSegueWithIdentifier:@"segueToVideo" sender:self];
 }
 
--(void) videotcp_command:(NSObject *)sender withJSON:(NSDictionary *)contents {
-    // NSLog([self debugDescription]);
+-(void) videotcp_connection_closed:(NSObject *)sender {
+    
 }
-
-
 
 #pragma mark - Table view data source
-
-/*- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    // Return the number of sections.
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-
-    // Return the number of rows in the section.
-    return [self.toDoItems count];
-}
-
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ListPrototypeCell" forIndexPath:indexPath];
-    
-    ToDoItem *toDoItem = [self.toDoItems objectAtIndex:indexPath.row];
-    cell.textLabel.text = toDoItem.itemName;
-    
-    if (toDoItem.completed) {
-        cell.accessoryType = UITableViewCellAccessoryCheckmark;
-    } else {
-        cell.accessoryType = UITableViewCellAccessoryNone;
-    }
-
-    
-    return cell;
-}
-
-- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    ToDoItem *tappedItem = [self.toDoItems objectAtIndex:indexPath.row];
-    
-    tappedItem.completed = !tappedItem.completed;
-    
-    [tableView reloadRowsAtIndexPaths:@[indexPath]
-               withRowAnimation:UITableViewRowAnimationNone];
-}
-
-
-
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
 
 #pragma mark - Navigation
 
@@ -408,18 +272,11 @@
     }
 }
 
-
-- (IBAction)unwindToList:(UIStoryboardSegue *)segue {
+// Torna dal video alla home
+- (IBAction)unwindToHome:(UIStoryboardSegue *)segue {
     [self.videoTCP setDelegate:self];
-    
-//    AddItemViewController *source = [segue sourceViewController];
-//    ToDoItem *item = source.toDoItem;
-//    if (item != nil) {
-//        [self.toDoItems addObject:item];
-//        [self.tableView reloadData];
-//    }
-    
 }
+
 
 - (NSString*) getIPAddress
 {
@@ -427,13 +284,10 @@
     struct ifaddrs *interfaces = nil;
     
     // get all our interfaces and find the one that corresponds to wifi
-    if (!getifaddrs(&interfaces))
-    {
-        for (struct ifaddrs* addr = interfaces; addr != NULL; addr = addr->ifa_next)
-        {
+    if (!getifaddrs(&interfaces)) {
+        for (struct ifaddrs* addr = interfaces; addr != NULL; addr = addr->ifa_next) {
             if (([[NSString stringWithUTF8String:addr->ifa_name] isEqualToString:@"en0"]) &&
-                (addr->ifa_addr->sa_family == AF_INET))
-            {
+                (addr->ifa_addr->sa_family == AF_INET)) {
                 struct sockaddr_in* sa = (struct sockaddr_in*) addr->ifa_addr;
                 address = [NSString stringWithUTF8String:inet_ntoa(sa->sin_addr)];
                 break;

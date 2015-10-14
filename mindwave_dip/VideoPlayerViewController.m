@@ -38,6 +38,10 @@
 }
 */
 
+-(void) videotcp_connection_opened:(NSObject *)sender
+{
+}
+
 -(void) videotcp_connection_closed:(id)videoTCP {
     //NSLog([self debugDescription]);
     [self performSegueWithIdentifier:@"segueFromVideo" sender:self];
