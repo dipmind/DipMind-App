@@ -10,13 +10,6 @@
 #import "TGAccessoryDelegate.h"
 
 @interface MindwaveTCP : NSObject <NSStreamDelegate, TGAccessoryDelegate>
-    
-     //= CFSTR("10.20.10.69");
-    // = 3003;
-    
-    
-
-
 
 @property CFStringRef SERVER_ADDR;
 @property int SERVER_PORT;
@@ -33,9 +26,7 @@ extern NSString *kReachabilityChangedNotification;
 
 -(id)init;
 
-- (void)initNetworkCommunication;
-/*- (void) offBluetoothConn;
-- (void) onBluetoothConn;*/
+-(void)initNetworkCommunication;
 -(void)stopTcpConn;
 
 

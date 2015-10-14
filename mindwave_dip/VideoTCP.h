@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 /*
- *Crea delegato per videoTCP
+ * Crea delegato per videoTCP
  */
 
 @protocol VideoTCPDelegate <NSObject>

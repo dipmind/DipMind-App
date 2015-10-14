@@ -7,18 +7,17 @@
 //
 
 #import "MindwaveTCP.h"
-
-
 #import "TGAccessoryManager.h"
 
-@implementation MindwaveTCP 
+
+@implementation MindwaveTCP
+
 - (id)init {
     self = [super init];
     
     if (self) {
         self.SERVER_PORT = 3003;
         self.SERVER_ADDR = CFSTR("10.20.10.69");
-        //self.SERVER_ADDR = CFSTR("10.20.189.47");
         
         self.mindwave_connected = false;
         self.tcp_connected = false;
@@ -26,21 +25,10 @@
         
         [[TGAccessoryManager sharedTGAccessoryManager] setDelegate: self];
         [[TGAccessoryManager sharedTGAccessoryManager] setupManagerWithInterval:0.2];
-        
-        //[self onBluetoothConn];
     }
     
     return self;
 }
-
-/*- (void) onBluetoothConn {
-    [[TGAccessoryManager sharedTGAccessoryManager] setDelegate: self];
-    [[TGAccessoryManager sharedTGAccessoryManager] setupManagerWithInterval:0.2];
-}
-
-- (void) offBluetoothConn {
-    [[TGAccessoryManager sharedTGAccessoryManager] setDelegate:nil];
-}*/
 
 - (void)initNetworkCommunication {
     NSLog(@"initNetworkCommunication");
@@ -58,18 +46,9 @@
     
         [self.outputStream open];
     
-//        while (self.outputStream.streamStatus == NSStreamStatusOpening);
-//    
-//        if (self.outputStream.streamStatus == NSStreamStatusOpen) {
-//            self.tcp_connected = true;
-//        }
-        
     } else {
         [self.tcpConnectionTimer invalidate];
-        
     }
-    
-    
 }
 
 -(void)stream:(NSStream *) s handleEvent:(NSStreamEvent)eventCode {
@@ -110,22 +89,13 @@
 }
 
 - (void)accessoryDidConnect:(EAAccessory *)accessory {
-    
     self.tcpConnectionTimer = [NSTimer timerWithTimeInterval:2.0
-                                             target:self
-                                           selector:@selector(initNetworkCommunication)
-                                           userInfo:nil repeats:YES];
+                                                      target:self
+                                                    selector:@selector(initNetworkCommunication)
+                                                    userInfo:nil
+                                                     repeats:YES];
     
     [[NSRunLoop mainRunLoop] addTimer:self.tcpConnectionTimer forMode:NSRunLoopCommonModes];
-    
-    
-    //while (!self.tcp_connected) {
-     //   [self initNetworkCommunication];
-    //    NSLog(@"Stato stream: %d",self.outputStream.streamStatus);
-        /*if (self.outputStream.streamStatus != NSStreamStatusOpening)
-         NSLog(@"APro");
-         [self.outputStream open];*/
-   // }
     
     self.mindwave_connected = true;
     
@@ -134,22 +104,15 @@
     [[TGAccessoryManager sharedTGAccessoryManager] startStream];
     
     NSLog(@"%s", "*** MindWave connesso.");
-    
-    
 }
 
 -(void)terminateTcpConn {
     [self.outputStream close];
     self.tcp_connected = false;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"mindwaveTcp_false" object:self];
-   // [self.tcpConnectionTimer invalidate];
 }
 
 -(void)stopTcpConn {
-    /*[self.outputStream close];
-    self.tcp_connected = false;
-    [self.tcpConnectionTimer invalidate];*/
-    
     [self accessoryDidDisconnect];
 }
 
@@ -161,7 +124,6 @@
     
     [self terminateTcpConn];
     [self.tcpConnectionTimer invalidate];
-    
     
     NSLog(@"%s", "*** MindWave disconnesso.");
 }
@@ -175,18 +137,11 @@
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:data options:NSJSONWritingPrettyPrinted error:nil];
         NSString *result = [[NSString alloc] initWithBytes:[jsonData bytes] length:[jsonData length] encoding:NSUTF8StringEncoding];
         [self.outputStream write:[jsonData bytes] maxLength:[jsonData length]];
-        //[outputStream write:[[@"aaaaaa" dataUsingEncoding:NSUTF8StringEncoding] bytes] maxLength:6 ];
         
         NSLog(@"Dati MindWave:\n%@", result);
     }
     
-    
 }
-
-
-
-
-
 
 
 @end

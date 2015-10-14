@@ -19,34 +19,26 @@
 #import "arpa/inet.h"
 
 @interface HomeViewController ()
-@property NSMutableArray *toDoItems;
-@property (nonatomic) Reachability *wifiReachability;
-@property (nonatomic) CBCentralManager *bluetoothManager;
-@property (nonatomic) CameraServer *rtspServer;
-@property (nonatomic) AsyncSocket *listenSocket;
-@property (nonatomic) NSMutableArray *connectedSockets;
+@property (nonatomic, retain) MindwaveTCP *mindwaveTCP;
+@property (nonatomic, retain) VideoTCP *videoTCP;
+
+@property (nonatomic, retain) NSMutableArray *toDoItems;
+@property (nonatomic, retain) Reachability *wifiReachability;
+@property (nonatomic, retain) CBCentralManager *bluetoothManager;
+@property (nonatomic, retain) CameraServer *rtspServer;
+@property (nonatomic, retain) AsyncSocket *listenSocket;
+@property (nonatomic, retain) NSMutableArray *connectedSockets;
 @property bool isRunning;
-@property (nonatomic) NSString *serverIP;
+@property (nonatomic, retain) NSString *serverIP;
 @end
 
 
 @implementation HomeViewController
 
-
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     self.serverIP = nil;
-    /*self.rtspServer = [CameraServer server];
-    self.mindwaveTCP = [[MindwaveTCP alloc] init];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videotcp_connection_changed:) name:@"VideoTcp_false" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videotcp_connection_changed:) name:@"VideoTcp_true" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavetcp_connection_changed:) name:@"mindwaveTcp_false" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavetcp_connection_changed:) name:@"mindwaveTcp_true" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavebluetooth_connection_changed:) name:@"mindwaveBluetooth_false" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavebluetooth_connection_changed:) name:@"mindwaveBluetooth_true" object:nil];*/
     
     //Creo un oggetto reachability che permette di vedere se c'e' connesione wifi o meno la notification permette di vedere cambiamenti di stato e quindi di instanziare i vari oggetti o meno
     //AVVIO VERIFICA SOLO SU WIFI PER RENDERE VISIBILE MIO IP
@@ -56,26 +48,6 @@
     [self.wifiReachability startNotifier];
     [self updateInterfaceWithReachability:self.wifiReachability];
     
-    //[self detectBluetooth];
-    
-    
-    
-    //self.toDoItems = [[NSMutableArray alloc] init];
-    
-      //[self loadInitialData];
-    
-    
-    
-    /*self.videoTCP = [[VideoTCP alloc] init];
-    //crea delegato per videoTCP che si accorge di eventi in base a come e' costruito il delegato, quando si "attiva" chiama la funzione implementata nel delegante(QUI)
-    //che il delegato ha la facolta' di compiere
-    [ self.videoTCP setDelegate:self];*/
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
     //INIZIALIZZO SOCKET ASCOLTO
     self.listenSocket = [[AsyncSocket alloc] initWithDelegate:self];
@@ -87,7 +59,7 @@
     
     //AVVIO SOCKET
     [self startStop:self];
-    NSLog(@"********Fine viewDIDLOAD");
+    NSLog(@"* Home view loaded.");
     
 }
 
@@ -326,7 +298,7 @@
                                                     delegate:nil
                                            cancelButtonTitle:@"Okay" otherButtonTitleArray:nil] autorelease];
     [alert show];*/
-    NSLog(stateString);
+    NSLog(@"%@", stateString);
 }
 
 
@@ -388,7 +360,7 @@
 }
 
 
-/*
+
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     // Return NO if you do not want the specified item to be editable.

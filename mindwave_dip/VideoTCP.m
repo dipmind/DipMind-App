@@ -10,7 +10,6 @@
 
 @implementation VideoTCP
 
-//
 @synthesize delegate;
 
 - (id)init {
@@ -27,7 +26,8 @@
     self.tcpConnectionTimer = [NSTimer timerWithTimeInterval:2.0
                                                       target:self
                                                     selector:@selector(connect)
-                                                    userInfo:nil repeats:YES];
+                                                    userInfo:nil
+                                                     repeats:YES];
     
     [[NSRunLoop mainRunLoop] addTimer:self.tcpConnectionTimer forMode:NSRunLoopCommonModes];
     
@@ -152,11 +152,6 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"VideoTcp_false" object:self];
     [self.tcpConnectionTimer invalidate];
 }
-
-
-
-
-
 
 
 @end

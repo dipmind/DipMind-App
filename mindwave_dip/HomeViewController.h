@@ -8,10 +8,10 @@
 #import "MindwaveTCP.h"
 #import "VideoTCP.h"
 #import <UIKit/UIKit.h>
+#import <CoreBluetooth/CoreBluetooth.h>
 
-@interface HomeViewController : UITableViewController <VideoTCPDelegate>
-@property (retain) MindwaveTCP *mindwaveTCP;
-@property (retain) VideoTCP *videoTCP;
+@interface HomeViewController : UITableViewController <VideoTCPDelegate, CBCentralManagerDelegate>
+
 
 - (IBAction)unwindToList:(UIStoryboardSegue *)segue;
 @property (nonatomic) IBOutlet UITableViewCell *wifiCell;
