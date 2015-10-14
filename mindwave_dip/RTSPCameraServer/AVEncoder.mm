@@ -114,7 +114,7 @@ static unsigned int to_host(unsigned char* p)
     NSFileHandle* file = [NSFileHandle fileHandleForReadingAtPath:path];
     struct stat s;
     fstat([file fileDescriptor], &s);
-    MP4Atom* movie = [MP4Atom atomAt:0 size:s.st_size type:(OSType)('file') inFile:file];
+    MP4Atom* movie = [MP4Atom atomAt:0 size:(int)s.st_size type:(OSType)('file') inFile:file];
     MP4Atom* moov = [movie childOfType:(OSType)('moov') startAt:0];
     MP4Atom* trak = nil;
     if (moov != nil)
@@ -169,7 +169,7 @@ static unsigned int to_host(unsigned char* p)
             if (esd != nil)
             {
                 // this is the avcC record that we are looking for
-                _avcC = [esd readAt:0 size:esd.length];
+                _avcC = [esd readAt:0 size:(int)esd.length];
                 if (_avcC != nil)
                 {
                     // extract size of length field
@@ -337,7 +337,7 @@ static unsigned int to_host(unsigned char* p)
     
     struct stat s;
     fstat([_inputFile fileDescriptor], &s);
-    int cReady = s.st_size - [_inputFile offsetInFile];
+    int cReady = (int)s.st_size - (int)[_inputFile offsetInFile];
     
     // locate the mdat atom if needed
     while (!_foundMDAT && (cReady > 8))

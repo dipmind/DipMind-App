@@ -494,7 +494,7 @@ static void onRTCP(CFSocketRef s,
     pts -= _ptsBase;
     uint64_t rtp = (uint64_t)(pts * 90000);
     rtp += _rtpBase;
-    tonet_long(packet + 4, rtp);
+    tonet_long(packet + 4, (uint32_t)rtp);
     tonet_long(packet + 8, _ssrc);
 }
 
@@ -521,8 +521,8 @@ static void onRTCP(CFSocketRef s,
             tonet_short(buf+2, 6);  // length (count of uint32_t minus 1)
             tonet_long(buf+4, _ssrc);
             tonet_long(buf+8, (_ntpBase >> 32));
-            tonet_long(buf+12, _ntpBase);
-            tonet_long(buf+16, _rtpBase);
+            tonet_long(buf+12, (uint32_t)_ntpBase);
+            tonet_long(buf+16, (uint32_t)_rtpBase);
             tonet_long(buf+20, (_packets - _packetsReported));
             tonet_long(buf+24, (_bytesSent - _bytesReported));
             int lenRTCP = 28;
