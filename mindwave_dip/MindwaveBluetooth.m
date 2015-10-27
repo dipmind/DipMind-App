@@ -34,7 +34,7 @@
     
     [[TGAccessoryManager sharedTGAccessoryManager] startStream];
     
-    NSLog(@"%s", "*** MindWave connesso.");
+    NSLog(@"%s", "** MindWave connesso.");
 }
 
 - (void)accessoryDidDisconnect {
@@ -43,7 +43,7 @@
     
     [[TGAccessoryManager sharedTGAccessoryManager] stopStream];
         
-    NSLog(@"%s", "*** MindWave disconnesso.");
+    NSLog(@"%s", "** MindWave disconnesso.");
 }
 
 - (void)dataReceived:(NSDictionary *)data {

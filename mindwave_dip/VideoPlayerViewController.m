@@ -64,8 +64,7 @@
 -(void ) videotcp_command:(NSObject *)sender withJSON:(NSDictionary *)json {
     
     if(![[(AVURLAsset *)self.player.currentItem.asset URL] isEqual:[NSURL URLWithString:json[@"url"]]]) {
-        // NSString *temp = [@"http://10.20.10.69:3000" stringByAppendingString:[contents substringFromIndex:4]];
-        NSLog(@"** video player: switching to '%@'", json[@"url"]);
+        NSLog(@"** Player video: '%@' in riproduzione.", json[@"url"]);
         [self.player replaceCurrentItemWithPlayerItem:[AVPlayerItem playerItemWithURL:[NSURL URLWithString:json[@"url"]]]];
     }
         
@@ -73,12 +72,10 @@
             toleranceBefore:CMTimeMakeWithSeconds(0.5, 1) toleranceAfter:CMTimeMakeWithSeconds(0.5, 1)];
         
     if ([json[@"command"] isEqualToString:@"play"]) {
-        NSLog(@"** video player: play");
-        NSLog(@"** video player: of '%@'", json[@"url"]);
+        NSLog(@"** Player video: comando 'play' di '%@'.", json[@"url"]);
         [self.player play];
     } else if ([json[@"command"] isEqualToString:@"pause"]) {
-        NSLog(@"** video player: pause");
-        NSLog(@"** video player: of '%@'", json[@"url"]);
+        NSLog(@"** Player video: comando 'pause' di '%@'.", json[@"url"]);
         [self.player pause];
     }
 }

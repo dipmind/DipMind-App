@@ -46,10 +46,6 @@
 -(void) initNetworkCommunication;
 
 
-//- (void)initNetworkCommunication;
-
-
-
 @end
 
 
