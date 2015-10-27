@@ -21,11 +21,23 @@
     NSURL *streamURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
     
     self.player = [AVPlayer playerWithURL:streamURL];
-}        
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavetcp_connection_closed) name:@"mindwaveTcp_false" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkError) name:@"networkError" object:nil];}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(void) mindwavetcp_connection_closed {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self performSegueWithIdentifier:@"segueFromVideo" sender:self];
+}
+
+-(void) networkError {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self performSegueWithIdentifier:@"segueFromVideo" sender:self];
 }
 
 /*
@@ -44,7 +56,8 @@
 
 -(void) videotcp_connection_closed:(id)videoTCP {
     //NSLog([self debugDescription]);
-    [self.videoTCP stopTcpConn];
+    //[self.videoTCP stopTcpConn];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self performSegueWithIdentifier:@"segueFromVideo" sender:self];
 }
 

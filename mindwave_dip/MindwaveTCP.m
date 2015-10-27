@@ -7,7 +7,6 @@
 //
 
 #import "MindwaveTCP.h"
-#import "TGAccessoryManager.h"
 
 
 @implementation MindwaveTCP
@@ -19,12 +18,7 @@
         self.SERVER_PORT = 3003;
         self.SERVER_ADDR = address;
         
-        self.mindwave_connected = false;
         self.tcp_connected = false;
-        self.wifiActive = false;
-        
-        [[TGAccessoryManager sharedTGAccessoryManager] setDelegate: self];
-        [[TGAccessoryManager sharedTGAccessoryManager] setupManagerWithInterval:0.2];
     }
     
     return self;
@@ -33,7 +27,7 @@
 - (void)initNetworkCommunication {
     NSLog(@"initNetworkCommunication");
     
-    if(!self.tcp_connected && self.wifiActive == true) {
+    if(!self.tcp_connected) {
          NSLog(@"Non connesso.");
         
     
@@ -71,7 +65,8 @@
             NSLog(@"Stream event: ErrorOccurred");
             NSError *theError =[s streamError];
             NSLog(@"%@", [NSString stringWithFormat:@"Error %i: %@", [theError code], [theError localizedDescription]]);
-            if([theError code] == 32) {// Error 32: The operation couldn’t be completed. Broken pipe
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"networkError" object:self];
+            /*if([theError code] == 32) {// Error 32: The operation couldn’t be completed. Broken pipe
                 [self terminateTcpConn];
                 self.tcpConnectionTimer = [NSTimer timerWithTimeInterval:2.0
                                                                   target:self
@@ -79,7 +74,7 @@
                                                                 userInfo:nil repeats:YES];
                 
                 [[NSRunLoop mainRunLoop] addTimer:self.tcpConnectionTimer forMode:NSRunLoopCommonModes];
-            }
+            }*/
             
             break;
         }
@@ -88,61 +83,27 @@
     }
 }
 
-- (void)accessoryDidConnect:(EAAccessory *)accessory {
-    
-    self.tcpConnectionTimer = [NSTimer timerWithTimeInterval:2.0
-                                                      target:self
-                                                    selector:@selector(initNetworkCommunication)
-                                                    userInfo:nil
-                                                     repeats:YES];
-    
-    [[NSRunLoop mainRunLoop] addTimer:self.tcpConnectionTimer forMode:NSRunLoopCommonModes];
-    
-    self.mindwave_connected = true;
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"mindwaveBluetooth_true" object:self];
-    
-    [[TGAccessoryManager sharedTGAccessoryManager] startStream];
-    
-    NSLog(@"%s", "*** MindWave connesso.");
-}
 
 -(void)terminateTcpConn {
     [self.outputStream close];
     self.tcp_connected = false;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"mindwaveTcp_false" object:self];
-}
-
--(void)stopTcpConn {
-    [self accessoryDidDisconnect];
-}
-
-- (void)accessoryDidDisconnect {
-    self.mindwave_connected = false;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"mindwaveBluetooth_false" object:self];
-    
-    [[TGAccessoryManager sharedTGAccessoryManager] stopStream];
-    
-    [self terminateTcpConn];
     [self.tcpConnectionTimer invalidate];
-    
-    NSLog(@"%s", "*** MindWave disconnesso.");
 }
 
-- (void)dataReceived:(NSDictionary *)data {
-    
-    NSLog(@"Stato stream: %d",self.outputStream.streamStatus);
+
+- (void)sendData:(NSDictionary *)data {
     
     if(self.tcp_connected) {
         
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:data options:NSJSONWritingPrettyPrinted error:nil];
-        NSString *result = [[NSString alloc] initWithBytes:[jsonData bytes] length:[jsonData length] encoding:NSUTF8StringEncoding];
-        [self.outputStream write:[jsonData bytes] maxLength:[jsonData length]];
+       [self.outputStream write:[jsonData bytes] maxLength:[jsonData length]];
         
-        NSLog(@"Dati MindWave:\n%@", result);
+        NSLog(@"Dati MindWave:\n%@", [[NSString alloc] initWithBytes:[jsonData bytes] length:[jsonData length] encoding:NSUTF8StringEncoding]);
     }
     
 }
+
 
 
 @end

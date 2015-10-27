@@ -21,7 +21,7 @@
         
         self.tcp_connected = false;
     }
-    
+    /*
     self.tcpConnectionTimer = [NSTimer timerWithTimeInterval:2.0
                                                       target:self
                                                     selector:@selector(connect)
@@ -29,12 +29,13 @@
                                                      repeats:YES];
     
     [[NSRunLoop mainRunLoop] addTimer:self.tcpConnectionTimer forMode:NSRunLoopCommonModes];
+     */
     
     return self;
 }
 
 
--(void) connect {
+-(void) initNetworkCommunication {
     if (!self.tcp_connected) {
         
         //CFWriteStreamRef writeStream;
@@ -104,28 +105,30 @@
         }
         case NSStreamEventEndEncountered:
             NSLog(@"Porta 3005Stream event: EndEncountered");
-            [self terminateTcpConn];
+            //[self terminateTcpConn];
             [self.delegate videotcp_connection_closed:self];
-            self.tcpConnectionTimer = [NSTimer timerWithTimeInterval:2.0
+            /*self.tcpConnectionTimer = [NSTimer timerWithTimeInterval:2.0
                                                               target:self
-                                                            selector:@selector(connect)
+                                                            selector:@selector(initNetworkCommunication)
                                                             userInfo:nil repeats:YES];
             
-            [[NSRunLoop mainRunLoop] addTimer:self.tcpConnectionTimer forMode:NSRunLoopCommonModes];
+            [[NSRunLoop mainRunLoop] addTimer:self.tcpConnectionTimer forMode:NSRunLoopCommonModes];*/
             break;
         case NSStreamEventErrorOccurred: {
             NSLog(@"Porta 3005 Stream event: ErrorOccurred");
             NSError *theError =[s streamError];
             NSLog(@"Porta 3005 %@", [NSString stringWithFormat:@"Error %i: %@", [theError code], [theError localizedDescription]]);
-            if([theError code] == 32) {// Error 32: The operation couldn’t be completed. Broken pipe
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"networkError" object:self];
+            [self.delegate videotcp_connection_closed:self];
+            /*if([theError code] == 32) {// Error 32: The operation couldn’t be completed. Broken pipe
                 [self terminateTcpConn];
                 self.tcpConnectionTimer = [NSTimer timerWithTimeInterval:2.0
                                                                   target:self
-                                                                selector:@selector(connect)
+                                                                selector:@selector(initNetworkCommunication)
                                                                 userInfo:nil repeats:YES];
                 
                 [[NSRunLoop mainRunLoop] addTimer:self.tcpConnectionTimer forMode:NSRunLoopCommonModes];
-            }
+            }*/
             
             break;
         }
@@ -137,14 +140,6 @@
 
 
 -(void)terminateTcpConn {
-    [self.inputStream close];
-    //[self.outputStream close];
-    self.tcp_connected = false;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"VideoTcp_false" object:self];
-    // [self.tcpConnectionTimer invalidate];
-}
-
--(void)stopTcpConn {
     [self.inputStream close];
     //[self.outputStream close];
     self.tcp_connected = false;

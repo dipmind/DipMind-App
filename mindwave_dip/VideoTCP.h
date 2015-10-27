@@ -42,7 +42,8 @@
 @property bool tcp_connected ;//= false;
 
 - (id)initWithServerIP:(NSString*) address ;
--(void)stopTcpConn;
+-(void)terminateTcpConn;
+-(void) initNetworkCommunication;
 
 
 //- (void)initNetworkCommunication;
