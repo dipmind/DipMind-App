@@ -46,7 +46,7 @@ static CameraServer* theServer;
 {
     if (_session == nil)
     {
-        NSLog(@"RTSP_camera: Starting up server");
+        //NSLog(@"RTSP_camera: Starting up server");
         
         // create capture device with video input
         _session = [[AVCaptureSession alloc] init];
@@ -101,7 +101,7 @@ static CameraServer* theServer;
 
 - (void) shutdown
 {
-    NSLog(@"RTSP_camera: Shutting down server");
+    //NSLog(@"RTSP_camera: Shutting down server");
     if (_session)
     {
         [_session stopRunning];

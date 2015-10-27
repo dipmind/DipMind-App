@@ -110,7 +110,7 @@ static void onSocket (
     {
         @synchronized(self)
         {
-            NSLog(@"Client connected");
+           // NSLog(@"Client connected");
             [_connections addObject:conn];
         }
     }
@@ -132,7 +132,7 @@ static void onSocket (
 {
     @synchronized(self)
     {
-        NSLog(@"Client disconnected");
+        //NSLog(@"Client disconnected");
         [_connections removeObject:conn];
     }
 }
@@ -175,7 +175,7 @@ static void onSocket (
     }
     freeifaddrs(interfaces);
     
-    NSLog(@"Address = %@", address);
+    //NSLog(@"Address = %@", address);
     return address;
 }
 
