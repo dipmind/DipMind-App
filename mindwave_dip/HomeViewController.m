@@ -119,10 +119,12 @@
 {
     self.rtspServer = [CameraServer server];
     self.mindwaveTCP = [[MindwaveTCP alloc] initWithServerIP:self.serverIP];
+    self.videoTCP = [[VideoTCP alloc] initWithServerIP:self.serverIP];
+    [self.videoTCP setDelegate:self];
     
     // Indica callback per connessioni/disconnessioni
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videotcp_connection_changed:) name:@"VideoTcp_false" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videotcp_connection_changed:) name:@"VideoTcp_true" object:nil];
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videotcp_connection_changed:) name:@"VideoTcp_false" object:nil];
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videotcp_connection_changed:) name:@"VideoTcp_true" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavetcp_connection_changed:) name:@"mindwaveTcp_false" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavetcp_connection_changed:) name:@"mindwaveTcp_true" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavebluetooth_connection_changed:) name:@"mindwaveBluetooth_false" object:nil];
@@ -133,7 +135,7 @@
     
    
 }
-
+/*
 - (void) videotcp_connection_changed: (NSNotification *) note {
     if ([[note name] isEqualToString:@"VideoTcp_false"]) {
         self.serverCell.accessoryType = UITableViewCellAccessoryNone;
@@ -141,19 +143,19 @@
         self.serverCell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
 }
-
+*/
 - (void) mindwavetcp_connection_changed: (NSNotification *) note {
     if ([[note name] isEqualToString:@"mindwaveTcp_false"]) {
-        self.mindwaveCell.accessoryType = UITableViewCellAccessoryNone;
-    } else if ([[note name] isEqualToString:@"mindwaveTcp_true"] && self.mindwaveTCP.mindwave_connected) {
-        self.mindwaveCell.accessoryType = UITableViewCellAccessoryCheckmark;
+        self.serverCell.accessoryType = UITableViewCellAccessoryNone;
+    } else if ([[note name] isEqualToString:@"mindwaveTcp_true"] && self.mindwaveTCP.tcp_connected) {
+        self.serverCell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
 }
 
 - (void) mindwavebluetooth_connection_changed: (NSNotification *) note {
     if ([[note name] isEqualToString:@"mindwaveBluetooth_false"]) {
         self.mindwaveCell.accessoryType = UITableViewCellAccessoryNone;
-    } else if ([[note name] isEqualToString:@"mindwaveBluetooth_true"] && self.mindwaveTCP.tcp_connected) {
+    } else if ([[note name] isEqualToString:@"mindwaveBluetooth_true"] && self.mindwaveTCP.mindwave_connected) {
         self.mindwaveCell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
 }
@@ -182,13 +184,14 @@
         
     } else if (status == ReachableViaWiFi) {
         NSLog(@"** Wifi reachable");
-        
+        self.mindwaveTCP.wifiActive = true;
+        [self.rtspServer startup];
         // Solo se ha ricevuto l'ip dal server
         if (self.videoTCP == nil && self.serverIP != nil) {
-            self.videoTCP = [[VideoTCP alloc] initWithServerIP:self.serverIP];
-            [self.videoTCP setDelegate:self];
-            [self.rtspServer startup];
-            self.mindwaveTCP.wifiActive = true;
+            /*self.videoTCP = [[VideoTCP alloc] initWithServerIP:self.serverIP];
+            [self.videoTCP setDelegate:self];*/
+            
+            
             [self.mindwaveTCP initNetworkCommunication];
         }
         
@@ -275,6 +278,15 @@
 // Torna dal video alla home
 - (IBAction)unwindToHome:(UIStoryboardSegue *)segue {
     [self.videoTCP setDelegate:self];
+    [self.videoTCP stopTcpConn];
+    [self.mindwaveTCP stopTcpConn];
+    
+    [self.rtspServer shutdown];
+    
+    [self startStop:self];
+    
+    
+    
 }
 
 

@@ -89,6 +89,7 @@
 }
 
 - (void)accessoryDidConnect:(EAAccessory *)accessory {
+    
     self.tcpConnectionTimer = [NSTimer timerWithTimeInterval:2.0
                                                       target:self
                                                     selector:@selector(initNetworkCommunication)
@@ -118,7 +119,7 @@
 
 - (void)accessoryDidDisconnect {
     self.mindwave_connected = false;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"mindwaveBluetooth_true" object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"mindwaveBluetooth_false" object:self];
     
     [[TGAccessoryManager sharedTGAccessoryManager] stopStream];
     

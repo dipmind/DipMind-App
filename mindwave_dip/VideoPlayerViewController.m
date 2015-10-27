@@ -44,6 +44,7 @@
 
 -(void) videotcp_connection_closed:(id)videoTCP {
     //NSLog([self debugDescription]);
+    [self.videoTCP stopTcpConn];
     [self performSegueWithIdentifier:@"segueFromVideo" sender:self];
 }
 
