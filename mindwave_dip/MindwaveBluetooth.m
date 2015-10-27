@@ -20,7 +20,7 @@
         self.tcp_connection = nil;
         
         [[TGAccessoryManager sharedTGAccessoryManager] setDelegate: self];
-        [[TGAccessoryManager sharedTGAccessoryManager] setupManagerWithInterval:0.2];
+        [[TGAccessoryManager sharedTGAccessoryManager] setupManagerWithInterval:1.0];
     }
     
     return self;

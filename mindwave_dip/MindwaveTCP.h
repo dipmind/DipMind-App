@@ -16,7 +16,6 @@
 @property bool tcp_connected;
 
 @property NSOutputStream *outputStream;
-@property NSTimer *tcpConnectionTimer;
 
 
 -(id)initWithServerIP:(NSString*) address;

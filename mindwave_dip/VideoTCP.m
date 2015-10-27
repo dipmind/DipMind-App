@@ -35,9 +35,6 @@
         [self.inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
         
         [self.inputStream open];
-    } else {
-        [self.tcpConnectionTimer invalidate];
-    
     }
 }
 
@@ -98,7 +95,6 @@
     //[self.outputStream close];
     self.tcp_connected = false;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"VideoTcp_false" object:self];
-    [self.tcpConnectionTimer invalidate];
 }
 
 

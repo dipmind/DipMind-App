@@ -34,9 +34,6 @@
         [self.outputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     
         [self.outputStream open];
-    
-    } else {
-        [self.tcpConnectionTimer invalidate];
     }
 }
 
@@ -72,7 +69,6 @@
     [self.outputStream close];
     self.tcp_connected = false;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"mindwaveTcp_false" object:self];
-    [self.tcpConnectionTimer invalidate];
 }
 
 
