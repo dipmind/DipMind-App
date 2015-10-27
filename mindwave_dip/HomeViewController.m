@@ -43,11 +43,11 @@
     [super viewDidLoad];
   
    
-    self.mindwaveBluetooth = [[MindwaveBluetooth alloc] init];
-    [self detectBluetooth];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavebluetooth_connection_changed:) name:@"mindwaveBluetooth_false" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavebluetooth_connection_changed:) name:@"mindwaveBluetooth_true" object:nil];
+    
+    self.mindwaveBluetooth = [[MindwaveBluetooth alloc] init];
+    [self detectBluetooth];
 
     
     // Crea un oggetto Reachability che permette di controllare se e' presente una connessione wifi,
