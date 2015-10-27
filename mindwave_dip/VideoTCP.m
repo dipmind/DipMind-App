@@ -43,7 +43,7 @@
         case NSStreamEventOpenCompleted:
             NSLog(@"** Evento stream su porta %d: Open Completed", self.SERVER_PORT);
             self.tcp_connected = true;
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"VideoTcp_true" object:self];
+            //[[NSNotificationCenter defaultCenter] postNotificationName:@"VideoTcp_true" object:self];
             break;
         case NSStreamEventHasSpaceAvailable:
             NSLog(@"** Evento stream su porta %d: Has Space Available", self.SERVER_PORT);
@@ -92,9 +92,8 @@
 
 -(void)terminateTcpConn {
     [self.inputStream close];
-    //[self.outputStream close];
     self.tcp_connected = false;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"VideoTcp_false" object:self];
+    //[[NSNotificationCenter defaultCenter] postNotificationName:@"VideoTcp_false" object:self];
 }
 
 

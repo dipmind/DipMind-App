@@ -114,7 +114,7 @@
     self.rtspServer = [CameraServer server];
     [self.rtspServer startup];
     
-    //Creo oggetto per invio dati mindwave su porta 3003 e associo a connessione bluetooth mindwave
+    // Creo oggetto per invio dati mindwave su porta 3003 e associo a connessione bluetooth mindwave
     self.mindwaveTCP = [[MindwaveTCP alloc] initWithServerIP:self.serverIP];
     self.mindwaveBluetooth.tcp_connection = self.mindwaveTCP;
     NSLog(@"** Setup della connessione principale con il server %@ sulla porta %d...", self.serverIP, self.mindwaveTCP.SERVER_PORT);
@@ -134,6 +134,18 @@
     [self updateLogicWithReachability:self.wifiReachability];
 }
 
+-(void) disconnectAll
+{
+    [self.rtspServer shutdown];
+    self.rtspServer = nil;
+    
+    [self.videoTCP terminateTcpConn];
+    self.videoTCP = nil;
+    
+    [self.mindwaveTCP terminateTcpConn];
+    self.mindwaveTCP = nil;
+}
+
 - (void) mindwavetcp_connection_changed: (NSNotification *) note {
     if ([[note name] isEqualToString:@"mindwaveTcp_false"]) {
         self.serverCell.accessoryType = UITableViewCellAccessoryNone;
@@ -151,7 +163,7 @@
 }
 
 -(void) networkError {
-    if (!self.networkErrorManaged){
+    if (!self.networkErrorManaged) {
         self.networkErrorManaged = true;
         
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Errore"
@@ -211,21 +223,6 @@
     }
 }
 
--(void) disconnectAll
-{
-    
-    [self.rtspServer shutdown];
-    self.rtspServer = nil;
-    
-    [self.videoTCP terminateTcpConn];
-    self.videoTCP = nil;
-    
-    [self.mindwaveTCP terminateTcpConn];
-    self.mindwaveTCP = nil;
-
-}
-
-
 
 - (void)detectBluetooth
 {
@@ -284,7 +281,6 @@
     // Pass the selected object to the new view controller.
     
     if([segue.identifier isEqualToString:@"segueToVideo"]) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
         VideoPlayerViewController* v = (VideoPlayerViewController*)[segue destinationViewController];
         v.videoTCP = self.videoTCP;
     }
@@ -294,9 +290,7 @@
 // Torna dal video alla home
 - (IBAction)unwindToHome:(UIStoryboardSegue *)segue {
     [self disconnectAll];
-    
     [self fetchIPFromServer];
-    
 }
 
 
