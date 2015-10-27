@@ -33,6 +33,8 @@
 @property NSString *serverIP;
 @property bool networkErrorManaged;
 
+@property VideoPlayerViewController * v;
+
 @end
 
 
@@ -163,6 +165,10 @@
 }
 
 -(void) networkError {
+    // se e' su videoplayerview
+    if(self.v)
+        [self.v performSegueWithIdentifier:@"segueFromVideo" sender:self.v];
+        
     if (!self.networkErrorManaged) {
         self.networkErrorManaged = true;
         
@@ -281,8 +287,8 @@
     // Pass the selected object to the new view controller.
     
     if([segue.identifier isEqualToString:@"segueToVideo"]) {
-        VideoPlayerViewController* v = (VideoPlayerViewController*)[segue destinationViewController];
-        v.videoTCP = self.videoTCP;
+        self.v = (VideoPlayerViewController*)[segue destinationViewController];
+        self.v.videoTCP = self.videoTCP;
     }
 }
 
@@ -291,6 +297,7 @@
 - (IBAction)unwindToHome:(UIStoryboardSegue *)segue {
     [self disconnectAll];
     [self fetchIPFromServer];
+    self.v = nil;
 }
 
 
