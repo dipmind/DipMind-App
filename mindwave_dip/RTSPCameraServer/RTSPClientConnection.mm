@@ -300,7 +300,7 @@ static void onRTCP(CFSocketRef s,
             CFSocketError e = CFSocketSendData(_s, NULL, (__bridge CFDataRef)(dataResponse), 2);
             if (e)
             {
-                NSLog(@"send %ld", e);
+                //NSLog(@"send %ld", e);
             }
         }
     }
@@ -419,7 +419,7 @@ static void onRTCP(CFSocketRef s,
                 continue;
             }
             _bFirst = NO;
-            NSLog(@"Playback starting at first IDR");
+            //NSLog(@"Playback starting at first IDR");
         }
         
         if (cBytes < max_single_packet)
