@@ -64,6 +64,14 @@
     self.listenSocket = [[AsyncSocket alloc] initWithDelegate:self];
     self.connectedSockets = [[NSMutableArray alloc] initWithCapacity:1];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(restartConnections) name:@"restartConnections" object:nil];
+    
+    [self fetchIPFromServer];
+}
+
+-(void) restartConnections
+{
+    [self disconnectAll];
     [self fetchIPFromServer];
 }
 
@@ -106,6 +114,18 @@
     
     // Avvia tutto il resto (mindwaveTCP, videoTCP, rtspServer)
     [self startUpAll];
+}
+
+- (void)socketDidDisconnect:(AsyncSocket *)sock withError:(NSError *)err
+{
+    if (sock != self.listenSocket)
+    {
+        
+        @synchronized(self.connectedSockets)
+        {
+            [self.connectedSockets removeObject:sock];
+        }
+    }
 }
 
 - (void) startUpAll
@@ -166,8 +186,8 @@
 
 -(void) networkError {
     // se e' su videoplayerview
-    if(self.v)
-        [self.v performSegueWithIdentifier:@"segueFromVideo" sender:self.v];
+    /*if(self.v)
+        [self.v performSegueWithIdentifier:@"segueFromVideo" sender:self.v];*/
         
     if (!self.networkErrorManaged) {
         self.networkErrorManaged = true;
@@ -180,9 +200,8 @@
         [alert addAction:defaultAction];
         [self presentViewController:alert animated:YES completion:nil];
         
-        [self disconnectAll];
-        
-        [self fetchIPFromServer];
+       // [self disconnectAll];
+        //[self fetchIPFromServer];
     }
     
 }
@@ -219,11 +238,11 @@
     
     if (status == NotReachable) {
         
-        if (self.serverIP != nil){
+        if (self.serverIP != nil) {
             //E' gia' avvenuta la connessione iniziale riporto a aspettare connessione
-            [self disconnectAll];
+            //[self disconnectAll];
             
-            [self fetchIPFromServer];
+           // [self fetchIPFromServer];
         }
         
     }
@@ -295,8 +314,8 @@
 
 // Torna dal video alla home
 - (IBAction)unwindToHome:(UIStoryboardSegue *)segue {
-    [self disconnectAll];
-    [self fetchIPFromServer];
+    //[self disconnectAll];
+    //[self fetchIPFromServer];
     self.v = nil;
 }
 

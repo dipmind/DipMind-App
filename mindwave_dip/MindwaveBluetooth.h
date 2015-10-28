@@ -15,4 +15,6 @@
 @property bool mindwave_connected;
 @property MindwaveTCP *tcp_connection;
 
+
+
 @end

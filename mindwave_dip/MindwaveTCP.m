@@ -55,8 +55,9 @@
             break;
         case NSStreamEventErrorOccurred: {
             NSError *theError =[s streamError];
+            self.tcp_connected = false;
             NSLog(@"** Evento stream su porta %d: Error Occurred: error %d - %@", self.SERVER_PORT, [theError code], [theError localizedDescription]);
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"networkError" object:self];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"mindwaveTcp_false" object:self];
             break;
         }
         default:

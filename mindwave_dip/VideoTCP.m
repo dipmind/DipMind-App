@@ -63,7 +63,8 @@
                 if ([json[@"command"] isEqualToString:@"start"]) {
                     [self.delegate videotcp_connection_opened:self];
                 } else if ([json[@"command"] isEqualToString:@"stop"]) {
-                    //[self.delegate videotcp_connection_closed:self];
+                    [self.delegate videotcp_connection_closed:self];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"restartConnections" object:self];
                 } else {
                     [self.delegate videotcp_command:self withJSON:json];
                 }
@@ -75,13 +76,16 @@
         }
         case NSStreamEventEndEncountered:
              NSLog(@"** Evento stream su porta %d: End Encountered", self.SERVER_PORT);
-            //[self.delegate videotcp_connection_closed:self];
+            [self.delegate videotcp_connection_closed:self];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"restartConnections" object:self];
             break;
         case NSStreamEventErrorOccurred: {
             NSError *theError =[s streamError];
             NSLog(@"** Evento stream su porta %d: Error Occurred: error %d - %@", self.SERVER_PORT, [theError code], [theError localizedDescription]);
+            
+            [self.delegate videotcp_connection_closed:self];
             [[NSNotificationCenter defaultCenter] postNotificationName:@"networkError" object:self];
-            //[self.delegate videotcp_connection_closed:self];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"restartConnections" object:self];
             break;
         }
         default:
