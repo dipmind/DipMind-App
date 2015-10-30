@@ -179,6 +179,8 @@
 - (void) mindwavebluetooth_connection_changed: (NSNotification *) note {
     if ([[note name] isEqualToString:@"mindwaveBluetooth_false"]) {
         self.mindwaveCell.accessoryType = UITableViewCellAccessoryNone;
+        [self.videoTCP.delegate videotcp_connection_closed:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"mindwaveBluetoothConnectionOff" object:nil];
     } else if ([[note name] isEqualToString:@"mindwaveBluetooth_true"]) {
         self.mindwaveCell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
@@ -300,11 +302,18 @@
     
 }
 
+-(void) mindwaveBluetoothConnectionOff {
+    NSLog(@"mindwaveBluetoothConnectionOff");
+    [self disconnectAll];
+    [self fetchIPFromServer];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"mindwaveBluetoothConnectionOff" object:nil];
+}
+
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwaveBluetoothConnectionOff) name:@"mindwaveBluetoothConnectionOff" object:nil];
     if([segue.identifier isEqualToString:@"segueToVideo"]) {
         self.v = (VideoPlayerViewController*)[segue destinationViewController];
         self.v.videoTCP = self.videoTCP;
@@ -317,6 +326,8 @@
     //[self disconnectAll];
     //[self fetchIPFromServer];
     self.v = nil;
+    
+    
 }
 
 
