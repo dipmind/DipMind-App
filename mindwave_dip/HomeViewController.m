@@ -11,6 +11,7 @@
 #import "Reachability.h"
 #import "CameraServer.h"
 #import "AsyncSocket.h"
+#import "MindwaveBluetooth.h"
 
 // usati per ottenere l'ip
 #import "ifaddrs.h"
@@ -20,26 +21,36 @@
 
 
 @interface HomeViewController ()
-@property (nonatomic, retain) MindwaveTCP *mindwaveTCP;
-@property (nonatomic, retain) VideoTCP *videoTCP;
 
-@property (nonatomic, retain) NSMutableArray *toDoItems;
-@property (nonatomic, retain) Reachability *wifiReachability;
-@property (nonatomic, retain) CBCentralManager *bluetoothManager;
-@property (nonatomic, retain) CameraServer *rtspServer;
-@property (nonatomic, retain) AsyncSocket *listenSocket;
-@property (nonatomic, retain) NSMutableArray *connectedSockets;
-@property bool isWaitingConnection;
-@property (nonatomic, retain) NSString *serverIP;
+@property MindwaveTCP *mindwaveTCP;
+@property MindwaveBluetooth *mindwaveBluetooth;
+@property VideoTCP *videoTCP;
+@property Reachability *wifiReachability;
+@property CBCentralManager *bluetoothManager;
+@property CameraServer *rtspServer;
+@property AsyncSocket *listenSocket;
+@property NSMutableArray *connectedSockets;
+@property NSString *serverIP;
+@property bool networkErrorManaged;
+
+@property VideoPlayerViewController * v;
+
 @end
 
 
 @implementation HomeViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
+  
+   
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavebluetooth_connection_changed:) name:@"mindwaveBluetooth_false" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavebluetooth_connection_changed:) name:@"mindwaveBluetooth_true" object:nil];
     
-    self.serverIP = nil;
+    self.mindwaveBluetooth = [[MindwaveBluetooth alloc] init];
+    [self detectBluetooth];
+
     
     // Crea un oggetto Reachability che permette di controllare se e' presente una connessione wifi,
     // e la notification indica quando c'e' stato un cambiamento di stato della reachability.
@@ -48,57 +59,33 @@
     [self.wifiReachability startNotifier];
     [self updateInterfaceWithReachability:self.wifiReachability];
     
-    [self detectBluetooth];
     
     // Inizializza il socket in ascolto
     self.listenSocket = [[AsyncSocket alloc] initWithDelegate:self];
     self.connectedSockets = [[NSMutableArray alloc] initWithCapacity:1];
     
-    self.isWaitingConnection = NO;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(restartConnections) name:@"restartConnections" object:nil];
     
-    
-    //LO METTO SU RUNLOOP PER ASPETTARE UNA CONNESSIONE
-    //[self.listenSocket setRunLoopModes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
-    
-    // Apre socket
-    [self startStop:self];
-    NSLog(@"** Home view loaded.");
-    
+    [self fetchIPFromServer];
 }
 
-- (void)startStop:(id)sender
+-(void) restartConnections
 {
-    int port = FIRSTCONNECTION_PORT;
+    [self disconnectAll];
+    [self fetchIPFromServer];
+}
+
+-(void) fetchIPFromServer
+{
+    self.serverIP = nil;
     
-    if(!self.isWaitingConnection) {
-        // Comincia ad aspettare una connessione
-        
-        NSError *error = nil;
-        if(![self.listenSocket acceptOnPort:port error:&error]) {
-            NSLog(@"** Error trying to listen on port %d for a connection: %@", port, error);
-            return;
-        }
-        
-        self.isWaitingConnection = YES;
-    } else {
-        // Disconnette il socket e quindi smette di aspettare una connessione
-        [self.listenSocket disconnect];
-        
-        // Stop any client connections
-        for(NSUInteger i = 0; i < [self.connectedSockets count]; i++) {
-            // Call disconnect on the socket,
-            // which will invoke the onSocketDidDisconnect: method,
-            // which will remove the socket from the list.
-            [[self.connectedSockets objectAtIndex:i] disconnect];
-        }
-        
-        NSLog(@"** Stop listening on port %d for connections", port);
-        self.isWaitingConnection = NO;
-        
-        // Avvia tutto il resto (mindwaveTCP, videoTCP, rtspServer)
-        [self startUpAll];
+    NSError *error = nil;
+    if (![self.listenSocket acceptOnPort:FIRSTCONNECTION_PORT error:&error]) {
+        NSLog(@"** Impossibile accettare connessioni sulla porta %d: errore: %@", FIRSTCONNECTION_PORT, error);
+        return;
     }
 }
+
 
 - (void)onSocket:(AsyncSocket *)sock didAcceptNewSocket:(AsyncSocket *)newSocket
 {
@@ -107,47 +94,84 @@
 
 - (void)onSocket:(AsyncSocket *)sock didConnectToHost:(NSString *)host port:(UInt16)port
 {
-    NSLog(@"** Accepted client %@:%hu", host, port);
+    NSLog(@"** Host %@:%hu connesso.", host, port);
+    NSLog(@"** Rilevato IP del server: %@.", host);
     
     // Memorizza l'indirizzo del server
     self.serverIP = host;
     // Chiude il socket in ascolto, non e' piu' necessario
-    [self startStop:self];
+    [self.listenSocket disconnect];
+    
+    // Stop any client connections
+    for (int i = 0; i < [self.connectedSockets count]; i++) {
+        // Call disconnect on the socket,
+        // which will invoke the onSocketDidDisconnect: method,
+        // which will remove the socket from the list.
+        [[self.connectedSockets objectAtIndex:i] disconnect];
+    }
+    
+    NSLog(@"** Connessioni sulla porta %d terminate.", port);
+    
+    // Avvia tutto il resto (mindwaveTCP, videoTCP, rtspServer)
+    [self startUpAll];
+}
+
+- (void)socketDidDisconnect:(AsyncSocket *)sock withError:(NSError *)err
+{
+    if (sock != self.listenSocket)
+    {
+        
+        @synchronized(self.connectedSockets)
+        {
+            [self.connectedSockets removeObject:sock];
+        }
+    }
 }
 
 - (void) startUpAll
 {
+    self.networkErrorManaged = false;
+    
+    NSLog(@"** Avvio del server RSTP...");
     self.rtspServer = [CameraServer server];
+    [self.rtspServer startup];
+    
+    // Creo oggetto per invio dati mindwave su porta 3003 e associo a connessione bluetooth mindwave
     self.mindwaveTCP = [[MindwaveTCP alloc] initWithServerIP:self.serverIP];
+    self.mindwaveBluetooth.tcp_connection = self.mindwaveTCP;
+    NSLog(@"** Setup della connessione principale con il server %@ sulla porta %d...", self.serverIP, self.mindwaveTCP.SERVER_PORT);
+    [self.mindwaveTCP initNetworkCommunication];
+    
+    //creo oggetto per ricezione comandi su porta 3005
     self.videoTCP = [[VideoTCP alloc] initWithServerIP:self.serverIP];
     [self.videoTCP setDelegate:self];
+    NSLog(@"** Setup della connessione per i comandi video con il server %@ sulla porta %d...", self.serverIP, self.videoTCP.SERVER_PORT);
+    [self.videoTCP initNetworkCommunication];
     
     // Indica callback per connessioni/disconnessioni
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videotcp_connection_changed:) name:@"VideoTcp_false" object:nil];
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videotcp_connection_changed:) name:@"VideoTcp_true" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavetcp_connection_changed:) name:@"mindwaveTcp_false" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavetcp_connection_changed:) name:@"mindwaveTcp_true" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavebluetooth_connection_changed:) name:@"mindwaveBluetooth_false" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwavebluetooth_connection_changed:) name:@"mindwaveBluetooth_true" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkError) name:@"networkError" object:nil];
     
-    // L'update della reachability wifi fa partire
-    [self updateInterfaceWithReachability:self.wifiReachability];
+    [self updateLogicWithReachability:self.wifiReachability];
+}
+
+-(void) disconnectAll
+{
+    [self.rtspServer shutdown];
+    self.rtspServer = nil;
     
-   
+    [self.videoTCP terminateTcpConn];
+    self.videoTCP = nil;
+    
+    [self.mindwaveTCP terminateTcpConn];
+    self.mindwaveTCP = nil;
 }
-/*
-- (void) videotcp_connection_changed: (NSNotification *) note {
-    if ([[note name] isEqualToString:@"VideoTcp_false"]) {
-        self.serverCell.accessoryType = UITableViewCellAccessoryNone;
-    } else if ([[note name] isEqualToString:@"VideoTcp_true"]) {
-        self.serverCell.accessoryType = UITableViewCellAccessoryCheckmark;
-    }
-}
-*/
+
 - (void) mindwavetcp_connection_changed: (NSNotification *) note {
     if ([[note name] isEqualToString:@"mindwaveTcp_false"]) {
         self.serverCell.accessoryType = UITableViewCellAccessoryNone;
-    } else if ([[note name] isEqualToString:@"mindwaveTcp_true"] && self.mindwaveTCP.tcp_connected) {
+    } else if ([[note name] isEqualToString:@"mindwaveTcp_true"]) {
         self.serverCell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
 }
@@ -155,50 +179,33 @@
 - (void) mindwavebluetooth_connection_changed: (NSNotification *) note {
     if ([[note name] isEqualToString:@"mindwaveBluetooth_false"]) {
         self.mindwaveCell.accessoryType = UITableViewCellAccessoryNone;
-    } else if ([[note name] isEqualToString:@"mindwaveBluetooth_true"] && self.mindwaveTCP.mindwave_connected) {
+        [self.videoTCP.delegate videotcp_connection_closed:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"mindwaveBluetoothConnectionOff" object:nil];
+    } else if ([[note name] isEqualToString:@"mindwaveBluetooth_true"]) {
         self.mindwaveCell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
 }
 
-- (void)updateInterfaceWithReachability:(Reachability *)reachability {
-    NetworkStatus status = [reachability currentReachabilityStatus];
+-(void) networkError {
+    // se e' su videoplayerview
+    /*if(self.v)
+        [self.v performSegueWithIdentifier:@"segueFromVideo" sender:self.v];*/
         
-    if (status == NotReachable) {
-        NSLog(@"** Wifi not reachable");
-        if (self.videoTCP != nil) {
-            [self.videoTCP stopTcpConn];
-            self.videoTCP = nil;
-        }
+    if (!self.networkErrorManaged) {
+        self.networkErrorManaged = true;
         
-        if (self.rtspServer != nil)
-            [self.rtspServer shutdown];
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Errore"
+                                                                       message:@"Si è verificato un imprevisto nella comunicazione con il server.\nÈ necessario rieseguire la procedura di connessione."
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action) {}];
+        [alert addAction:defaultAction];
+        [self presentViewController:alert animated:YES completion:nil];
         
-        self.mindwaveTCP.wifiActive = false;
-        if (self.mindwaveTCP.mindwave_connected)
-            [self.mindwaveTCP stopTcpConn];
-        
-        // Rimuove le spunte e l'ip dalle cells
-        self.wifiCell.accessoryType = UITableViewCellAccessoryNone;
-        self.serverCell.accessoryType = UITableViewCellAccessoryNone;
-        self.wifiCell.detailTextLabel.text = @" ";
-        
-    } else if (status == ReachableViaWiFi) {
-        NSLog(@"** Wifi reachable");
-        self.mindwaveTCP.wifiActive = true;
-        [self.rtspServer startup];
-        // Solo se ha ricevuto l'ip dal server
-        if (self.videoTCP == nil && self.serverIP != nil) {
-            /*self.videoTCP = [[VideoTCP alloc] initWithServerIP:self.serverIP];
-            [self.videoTCP setDelegate:self];*/
-            
-            
-            [self.mindwaveTCP initNetworkCommunication];
-        }
-        
-        // Mostra l'ip come label di wifiCell
-        self.wifiCell.detailTextLabel.text = [self getIPAddress];
-        self.wifiCell.accessoryType = UITableViewCellAccessoryCheckmark;
+       // [self disconnectAll];
+        //[self fetchIPFromServer];
     }
+    
 }
 
 - (void)reachabilityChanged:(NSNotification *)note
@@ -206,7 +213,43 @@
     Reachability* curReach = [note object];
     NSParameterAssert([curReach isKindOfClass:[Reachability class]]);
     [self updateInterfaceWithReachability:curReach];
+    [self updateLogicWithReachability:curReach];
 }
+
+- (void)updateInterfaceWithReachability:(Reachability *)reachability
+{
+    NetworkStatus status = [reachability currentReachabilityStatus];
+    
+    if (status == NotReachable) {
+        NSLog(@"** Wi-Fi: rete non raggiungibile.");
+        // Rimuove le spunte e l'ip dalle cells
+        self.wifiCell.accessoryType = UITableViewCellAccessoryNone;
+        self.wifiCell.detailTextLabel.text = @" ";
+        
+    } else if (status == ReachableViaWiFi) {
+        NSLog(@"** Wi-Fi: rete raggiungibile.");
+        // Mostra l'ip come label di wifiCell
+        self.wifiCell.detailTextLabel.text = [self getIPAddress];
+        self.wifiCell.accessoryType = UITableViewCellAccessoryCheckmark;
+    }
+}
+
+-(void)updateLogicWithReachability:(Reachability *)reachability
+{
+    NetworkStatus status = [reachability currentReachabilityStatus];
+    
+    if (status == NotReachable) {
+        
+        if (self.serverIP != nil) {
+            //E' gia' avvenuta la connessione iniziale riporto a aspettare connessione
+            //[self disconnectAll];
+            
+           // [self fetchIPFromServer];
+        }
+        
+    }
+}
+
 
 - (void)detectBluetooth
 {
@@ -243,7 +286,7 @@
             break;
     }
     
-    NSLog(@"** Bluetooth status: %@", stateString);
+    NSLog(@"** Stato Bluetooth: %@", stateString);
 }
 
 - (void)didReceiveMemoryWarning {
@@ -252,7 +295,6 @@
 }
 
 -(void) videotcp_connection_opened:(id)videoTCP {
-   // NSLog([self debugDescription]);
     [self performSegueWithIdentifier:@"segueToVideo" sender:self];
 }
 
@@ -260,31 +302,30 @@
     
 }
 
-#pragma mark - Table view data source
-
-#pragma mark - Navigation
+-(void) mindwaveBluetoothConnectionOff {
+    NSLog(@"mindwaveBluetoothConnectionOff");
+    [self disconnectAll];
+    [self fetchIPFromServer];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"mindwaveBluetoothConnectionOff" object:nil];
+}
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mindwaveBluetoothConnectionOff) name:@"mindwaveBluetoothConnectionOff" object:nil];
     if([segue.identifier isEqualToString:@"segueToVideo"]) {
-        VideoPlayerViewController* v = (VideoPlayerViewController*)[segue destinationViewController];
-        v.videoTCP = self.videoTCP;
+        self.v = (VideoPlayerViewController*)[segue destinationViewController];
+        self.v.videoTCP = self.videoTCP;
     }
 }
 
+
 // Torna dal video alla home
 - (IBAction)unwindToHome:(UIStoryboardSegue *)segue {
-    [self.videoTCP setDelegate:self];
-    [self.videoTCP stopTcpConn];
-    [self.mindwaveTCP stopTcpConn];
-    
-    [self.rtspServer shutdown];
-    
-    [self startStop:self];
-    
+    //[self disconnectAll];
+    //[self fetchIPFromServer];
+    self.v = nil;
     
     
 }

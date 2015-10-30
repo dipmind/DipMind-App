@@ -26,27 +26,22 @@
 @interface VideoTCP : NSObject <NSStreamDelegate>
 
 //attacca a VideoTCP un delegato
-@property (nonatomic, weak) id <VideoTCPDelegate> delegate;
+@property id <VideoTCPDelegate> delegate;
 
 
 
 
-@property (retain) NSString* SERVER_ADDR;
+@property NSString* SERVER_ADDR;
 @property int SERVER_PORT;
 
 
-@property (retain) NSInputStream *inputStream;
-//@property (retain) NSOutputStream *outputStream;
+@property NSInputStream *inputStream;
 
-@property (retain) NSTimer *tcpConnectionTimer;
 @property bool tcp_connected ;//= false;
 
-- (id)initWithServerIP:(NSString*) address ;
--(void)stopTcpConn;
-
-
-//- (void)initNetworkCommunication;
-
+-(id)initWithServerIP:(NSString*) address ;
+-(void)terminateTcpConn;
+-(void) initNetworkCommunication;
 
 
 @end

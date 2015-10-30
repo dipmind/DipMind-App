@@ -7,27 +7,24 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "TGAccessoryDelegate.h"
 
-@interface MindwaveTCP : NSObject <NSStreamDelegate, TGAccessoryDelegate>
 
-@property (retain) NSString* SERVER_ADDR;
+@interface MindwaveTCP : NSObject <NSStreamDelegate>
+
+@property NSString* SERVER_ADDR;
 @property int SERVER_PORT;
+@property bool tcp_connected;
 
-@property bool mindwave_connected;// = false
-@property bool tcp_connected ;//= false;
-@property bool wifiActive;
+@property NSOutputStream *outputStream;
 
-extern NSString *kReachabilityChangedNotification;
-
-
-@property (retain) NSOutputStream *outputStream;
-@property (retain) NSTimer *tcpConnectionTimer;
 
 -(id)initWithServerIP:(NSString*) address;
 
 -(void)initNetworkCommunication;
--(void)stopTcpConn;
+
+-(void)terminateTcpConn;
+
+-(void)sendData:(NSDictionary*) data;
 
 
 @end

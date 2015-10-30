@@ -21,7 +21,8 @@
     NSURL *streamURL = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
     
     self.player = [AVPlayer playerWithURL:streamURL];
-}        
+    
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -43,16 +44,13 @@
 }
 
 -(void) videotcp_connection_closed:(id)videoTCP {
-    //NSLog([self debugDescription]);
-    [self.videoTCP stopTcpConn];
     [self performSegueWithIdentifier:@"segueFromVideo" sender:self];
 }
 
 -(void ) videotcp_command:(NSObject *)sender withJSON:(NSDictionary *)json {
     
     if(![[(AVURLAsset *)self.player.currentItem.asset URL] isEqual:[NSURL URLWithString:json[@"url"]]]) {
-        // NSString *temp = [@"http://10.20.10.69:3000" stringByAppendingString:[contents substringFromIndex:4]];
-        NSLog(@"** video player: switching to '%@'", json[@"url"]);
+        NSLog(@"** Player video: '%@' in riproduzione.", json[@"url"]);
         [self.player replaceCurrentItemWithPlayerItem:[AVPlayerItem playerItemWithURL:[NSURL URLWithString:json[@"url"]]]];
     }
         
@@ -60,12 +58,10 @@
             toleranceBefore:CMTimeMakeWithSeconds(0.5, 1) toleranceAfter:CMTimeMakeWithSeconds(0.5, 1)];
         
     if ([json[@"command"] isEqualToString:@"play"]) {
-        NSLog(@"** video player: play");
-        NSLog(@"** video player: of '%@'", json[@"url"]);
+        NSLog(@"** Player video: comando 'play' di '%@'.", json[@"url"]);
         [self.player play];
     } else if ([json[@"command"] isEqualToString:@"pause"]) {
-        NSLog(@"** video player: pause");
-        NSLog(@"** video player: of '%@'", json[@"url"]);
+        NSLog(@"** Player video: comando 'pause' di '%@'.", json[@"url"]);
         [self.player pause];
     }
 }

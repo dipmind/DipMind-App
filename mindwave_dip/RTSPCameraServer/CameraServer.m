@@ -10,6 +10,8 @@
 #import "AVEncoder.h"
 #import "RTSPServer.h"
 
+@import UIKit;
+
 static CameraServer* theServer;
 
 @interface CameraServer  () <AVCaptureVideoDataOutputSampleBufferDelegate>
@@ -57,6 +59,8 @@ static CameraServer* theServer;
             if([d position] ==AVCaptureDevicePositionFront)
                 front = d;
         }
+        
+        
         AVCaptureDeviceInput* input = [AVCaptureDeviceInput deviceInputWithDevice:front error:nil];
         [_session addInput:input];
         
@@ -69,6 +73,24 @@ static CameraServer* theServer;
                                         nil];
         _output.videoSettings = setcapSettings;
         [_session addOutput:_output];
+        
+        
+        //AVCaptureConnection * conn = [AVCaptureConnection connectionWithInputPorts:input.ports output:_output];
+        AVCaptureConnection * conn = [[(AVCaptureOutput*)[[_session outputs] objectAtIndex:0] connections] objectAtIndex:0];
+         
+         if ([conn isVideoOrientationSupported]) {
+            
+            UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+            if (deviceOrientation == UIInterfaceOrientationPortraitUpsideDown)
+                [conn setVideoOrientation:AVCaptureVideoOrientationPortraitUpsideDown];
+            else if (deviceOrientation == UIInterfaceOrientationPortrait)
+                [conn setVideoOrientation:AVCaptureVideoOrientationPortrait];
+            else if (deviceOrientation == UIInterfaceOrientationLandscapeLeft)
+                [conn setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
+            else
+                [conn setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
+
+        }
         
         // create an encoder
         _encoder = [AVEncoder encoderForHeight:480 andWidth:720];
