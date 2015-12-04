@@ -77,6 +77,7 @@
 
 -(void) fetchIPFromServer
 {
+    [self.listenSocket disconnect];
     self.serverIP = nil;
     
     NSError *error = nil;
