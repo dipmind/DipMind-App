@@ -12,6 +12,9 @@
 
 @implementation VideoPlayerViewController
 
+const NSString *FILE_SERVER_PORT = @":3004";
+const NSString *ADDR_BASE = @"http://";
+
 /* iPad legge solo HLS standard (m3u8 con video h264 e audio aac) */
 
 - (void)viewDidLoad {
@@ -51,17 +54,17 @@
     
     if(![[(AVURLAsset *)self.player.currentItem.asset URL] isEqual:[NSURL URLWithString:json[@"url"]]]) {
         NSLog(@"** Player video: '%@' in riproduzione.", json[@"url"]);
-        [self.player replaceCurrentItemWithPlayerItem:[AVPlayerItem playerItemWithURL:[NSURL URLWithString:json[@"url"]]]];
+        [self.player replaceCurrentItemWithPlayerItem:[AVPlayerItem playerItemWithURL:[NSURL URLWithString: [ADDR_BASE stringByAppendingString:[self.videoTCP.SERVER_ADDR stringByAppendingString:[FILE_SERVER_PORT stringByAppendingString: json[@"url"]]]]]]];
     }
         
     [self.player seekToTime:CMTimeMakeWithSeconds([json[@"time"] floatValue], 1)
             toleranceBefore:CMTimeMakeWithSeconds(0.5, 1) toleranceAfter:CMTimeMakeWithSeconds(0.5, 1)];
         
     if ([json[@"command"] isEqualToString:@"play"]) {
-        NSLog(@"** Player video: comando 'play' di '%@'.", json[@"url"]);
+        NSLog(@"** Player video: comando 'play' di '%@'.", [ADDR_BASE stringByAppendingString:[self.videoTCP.SERVER_ADDR stringByAppendingString:[FILE_SERVER_PORT stringByAppendingString: json[@"url"]]]]);
         [self.player play];
     } else if ([json[@"command"] isEqualToString:@"pause"]) {
-        NSLog(@"** Player video: comando 'pause' di '%@'.", json[@"url"]);
+        NSLog(@"** Player video: comando 'pause' di '%@'.", [ADDR_BASE stringByAppendingString:[self.videoTCP.SERVER_ADDR stringByAppendingString:[FILE_SERVER_PORT stringByAppendingString: json[@"url"]]]]);
         [self.player pause];
     }
 }
