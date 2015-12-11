@@ -52,19 +52,21 @@ const NSString *ADDR_BASE = @"http://";
 
 -(void ) videotcp_command:(NSObject *)sender withJSON:(NSDictionary *)json {
     
-    if(![[(AVURLAsset *)self.player.currentItem.asset URL] isEqual:[NSURL URLWithString:json[@"url"]]]) {
+    NSURL *requestURL = [NSURL URLWithString:[ADDR_BASE stringByAppendingString:[self.videoTCP.SERVER_ADDR stringByAppendingString:[FILE_SERVER_PORT stringByAppendingString: json[@"url"]]]]];
+    
+    if(![[(AVURLAsset *)self.player.currentItem.asset URL] isEqual:requestURL]) {
         NSLog(@"** Player video: '%@' in riproduzione.", json[@"url"]);
-        [self.player replaceCurrentItemWithPlayerItem:[AVPlayerItem playerItemWithURL:[NSURL URLWithString: [ADDR_BASE stringByAppendingString:[self.videoTCP.SERVER_ADDR stringByAppendingString:[FILE_SERVER_PORT stringByAppendingString: json[@"url"]]]]]]];
+        [self.player replaceCurrentItemWithPlayerItem:[AVPlayerItem playerItemWithURL:requestURL]];
     }
         
     [self.player seekToTime:CMTimeMakeWithSeconds([json[@"time"] floatValue], 1)
             toleranceBefore:CMTimeMakeWithSeconds(0.5, 1) toleranceAfter:CMTimeMakeWithSeconds(0.5, 1)];
         
     if ([json[@"command"] isEqualToString:@"play"]) {
-        NSLog(@"** Player video: comando 'play' di '%@'.", [ADDR_BASE stringByAppendingString:[self.videoTCP.SERVER_ADDR stringByAppendingString:[FILE_SERVER_PORT stringByAppendingString: json[@"url"]]]]);
+        NSLog(@"** Player video: comando 'play' di '%@'.", [requestURL absoluteString]);
         [self.player play];
     } else if ([json[@"command"] isEqualToString:@"pause"]) {
-        NSLog(@"** Player video: comando 'pause' di '%@'.", [ADDR_BASE stringByAppendingString:[self.videoTCP.SERVER_ADDR stringByAppendingString:[FILE_SERVER_PORT stringByAppendingString: json[@"url"]]]]);
+        NSLog(@"** Player video: comando 'pause' di '%@'.", [requestURL absoluteString]);
         [self.player pause];
     }
 }
