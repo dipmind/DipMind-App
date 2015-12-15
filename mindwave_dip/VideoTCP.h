@@ -36,12 +36,14 @@
 
 
 @property NSInputStream *inputStream;
+@property NSOutputStream *outputStream;
 
 @property bool tcp_connected ;//= false;
 
 -(id)initWithServerIP:(NSString*) address ;
 -(void)terminateTcpConn;
 -(void) initNetworkCommunication;
+-(void)sendData:(NSDictionary*) data;
 
 
 @end

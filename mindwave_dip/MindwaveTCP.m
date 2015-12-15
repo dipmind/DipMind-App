@@ -46,7 +46,7 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:@"mindwaveTcp_true" object:self];
             break;
         case NSStreamEventHasSpaceAvailable:
-            NSLog(@"** Evento stream su porta %d: Has Space Available", self.SERVER_PORT);
+            //NSLog(@"** Evento stream su porta %d: Has Space Available", self.SERVER_PORT);
             break;
         case NSStreamEventEndEncountered:
             NSLog(@"** Evento stream su porta %d: End Encountered", self.SERVER_PORT);
@@ -81,7 +81,7 @@
        [self.outputStream write:[jsonData bytes] maxLength:[jsonData length]];
         
         // NSLog(@"Dati MindWave:\n%@", [[NSString alloc] initWithBytes:[jsonData bytes] length:[jsonData length] encoding:NSUTF8StringEncoding]);
-        NSLog(@"** Dati MindWave: ... ...");
+        //NSLog(@"** Dati MindWave: ... ...");
     }
     
 }

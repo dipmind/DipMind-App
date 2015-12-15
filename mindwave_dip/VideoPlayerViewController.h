@@ -15,6 +15,8 @@
 @interface VideoPlayerViewController : AVPlayerViewController <VideoTCPDelegate>
 
 @property (retain) VideoTCP *videoTCP;
+@property (retain) NSString *lastCommandId;
+@property (retain) NSString *lastCommandType;
 
 
 

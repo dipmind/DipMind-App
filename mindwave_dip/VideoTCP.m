@@ -28,13 +28,22 @@
 -(void) initNetworkCommunication {
     if (!self.tcp_connected) {
         CFReadStreamRef readStream;
-        CFStreamCreatePairWithSocketToHost(NULL, (__bridge CFStringRef)self.SERVER_ADDR, self.SERVER_PORT, &readStream, NULL);
+        CFWriteStreamRef writeStream;
+        CFStreamCreatePairWithSocketToHost(NULL, (__bridge CFStringRef)self.SERVER_ADDR, self.SERVER_PORT, &readStream, &writeStream);
         self.inputStream = (__bridge NSInputStream *)(readStream);
         
         [self.inputStream setDelegate:self];
         [self.inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
         
         [self.inputStream open];
+        
+        
+        self.outputStream = (__bridge NSOutputStream *)(writeStream);
+        
+        [self.outputStream setDelegate:self];
+        [self.outputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+        
+        [self.outputStream open];
     }
 }
 
@@ -96,9 +105,24 @@
 
 -(void)terminateTcpConn {
     [self.inputStream close];
+    [self.outputStream close];
     self.tcp_connected = false;
     //[[NSNotificationCenter defaultCenter] postNotificationName:@"VideoTcp_false" object:self];
 }
+
+- (void)sendData:(NSDictionary *)data {
+    
+    if(self.tcp_connected) {
+        
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:data options:NSJSONWritingPrettyPrinted error:nil];
+        [self.outputStream write:[jsonData bytes] maxLength:[jsonData length]];
+        
+        // NSLog(@"Dati MindWave:\n%@", [[NSString alloc] initWithBytes:[jsonData bytes] length:[jsonData length] encoding:NSUTF8StringEncoding]);
+        
+    }
+    
+}
+
 
 
 @end
