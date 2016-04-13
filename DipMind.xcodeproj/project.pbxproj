@@ -99,7 +99,7 @@
 				144494261B9EFAC2002C9AE1 /* RTSPCameraServer */,
 				14632A761B9EF41E004215D2 /* Reachability */,
 				14632A751B9EF3F2004215D2 /* Mindwave SDK */,
-				140DA40E1ACD9D7200256F5C /* mindwave_dip */,
+				140DA40E1ACD9D7200256F5C /* DipMind */,
 				140DA40D1ACD9D7200256F5C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -112,7 +112,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		140DA40E1ACD9D7200256F5C /* mindwave_dip */ = {
+		140DA40E1ACD9D7200256F5C /* DipMind */ = {
 			isa = PBXGroup;
 			children = (
 				140DA4131ACD9D7200256F5C /* AppDelegate.h */,
@@ -131,6 +131,7 @@
 				147C472A1BDF78B7004004EE /* MindwaveBluetooth.h */,
 				147C472B1BDF78B7004004EE /* MindwaveBluetooth.m */,
 			);
+			name = DipMind;
 			path = mindwave_dip;
 			sourceTree = "<group>";
 		};

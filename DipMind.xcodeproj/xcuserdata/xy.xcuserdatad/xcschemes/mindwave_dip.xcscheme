@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "140DA40B1ACD9D7200256F5C"
-               BuildableName = "mindwave_dip.app"
+               BuildableName = "DipMind.app"
                BlueprintName = "DipMind"
                ReferencedContainer = "container:DipMind.xcodeproj">
             </BuildableReference>
@@ -57,7 +57,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "140DA40B1ACD9D7200256F5C"
-            BuildableName = "mindwave_dip.app"
+            BuildableName = "DipMind.app"
             BlueprintName = "DipMind"
             ReferencedContainer = "container:DipMind.xcodeproj">
          </BuildableReference>
@@ -80,7 +80,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "140DA40B1ACD9D7200256F5C"
-            BuildableName = "mindwave_dip.app"
+            BuildableName = "DipMind.app"
             BlueprintName = "DipMind"
             ReferencedContainer = "container:DipMind.xcodeproj">
          </BuildableReference>
@@ -99,7 +99,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "140DA40B1ACD9D7200256F5C"
-            BuildableName = "mindwave_dip.app"
+            BuildableName = "DipMind.app"
             BlueprintName = "DipMind"
             ReferencedContainer = "container:DipMind.xcodeproj">
          </BuildableReference>
